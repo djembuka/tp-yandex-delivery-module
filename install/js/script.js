@@ -97,7 +97,10 @@ window.twinpxYadeliveryFindBtnObject = function () {
         id = checkbox.id;
       }
     });
-  block = document.getElementById(id).closest('.bx-soa-pp-company');
+  
+  if (document.getElementById(id)) {
+    block = document.getElementById(id).closest('.bx-soa-pp-company');
+  }
 
   if (id) {
     if (window.twinpxYadeliveryButtons) {
@@ -238,25 +241,27 @@ window.twinpxYadeliverySetCheckedStorage = function (onLoad) {
     `#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected .bx-soa-pp-company-graf-container input`
   );
 
-  if (onLoad) {
-    if (window.twinpxYadeliveryButtons) {
-      let btnObject;
-      window.twinpxYadeliveryButtons.forEach((obj) => {
-        if (obj.id === checkbox.id) {
-          btnObject = Object.assign({}, obj);
+  if (checkbox) {
+    if (onLoad) {
+      if (window.twinpxYadeliveryButtons) {
+        let btnObject;
+        window.twinpxYadeliveryButtons.forEach((obj) => {
+          if (obj.id === checkbox.id) {
+            btnObject = Object.assign({}, obj);
+          }
+        });
+        if (btnObject) {
+          window.twinpxYadeliveryInsertButton(
+            checkbox.closest('.bx-soa-pp-company'),
+            btnObject,
+            true
+          );
         }
-      });
-      if (btnObject) {
-        window.twinpxYadeliveryInsertButton(
-          checkbox.closest('.bx-soa-pp-company'),
-          btnObject,
-          true
-        );
       }
     }
+    //set session storage
+    window.sessionStorage.setItem('twpxYadeliveryId', checkbox.id);
   }
-  //set session storage
-  window.sessionStorage.setItem('twpxYadeliveryId', checkbox.id);
 };
 
 window.addEventListener('DOMContentLoaded', () => {
