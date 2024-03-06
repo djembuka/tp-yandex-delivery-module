@@ -97,7 +97,7 @@ window.twinpxYadeliveryFindBtnObject = function () {
         id = checkbox.id;
       }
     });
-  
+
   if (document.getElementById(id)) {
     block = document.getElementById(id).closest('.bx-soa-pp-company');
   }
@@ -850,7 +850,16 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
                     }
                   });
               } else if (addressBlock) {
-                addressBlock.remove();
+                // show only controls with data-prop equal to result.FIELDS
+                addressBlock
+                  .closest('.yd-popup-form')
+                  .querySelectorAll('[data-code]')
+                  .forEach((control) => {
+                    const code = control.getAttribute('data-code');
+                    if (!result.FIELDS[code]) {
+                      control.closest('.b-float-label').remove();
+                    }
+                  });
               }
 
               //validate inputs
