@@ -274,6 +274,9 @@ window.addEventListener('DOMContentLoaded', () => {
   //check the yandexDelivery
   if (document.querySelector('#bx-soa-order')) {
     document.querySelector('#bx-soa-order').addEventListener('click', (e) => {
+      if (e.target.closest('.bx-soa-pp-desc-container')) {
+        return;
+      }
       let block = e.target.closest('.bx-soa-pp-company');
       if (
         block &&
