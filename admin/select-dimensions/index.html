@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select</title>
+    <style>
+      .custom_parcel {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <select id="parcel">
+      <option value="1">1</option>
+      <option value="2">Задать самостоятельно</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
+    <div class="custom_parcel">
+      <input type="text" value="Ширина" id="twpxInputWidth" />
+      <input type="text" value="Высота" id="twpxInputHeight" />
+      <input type="text" value="Глубина" id="twpxInputDepth" />
+      <input type="text" value="Вес" id="twpxInputWeight" />
+    </div>
+
+    <script>
+      window.addEventListener('load', () => {
+        parcel.addEventListener('change', () => {
+          if (parcel.value === '2') {
+            document.querySelector('.custom_parcel').style.display = 'block';
+          } else {
+            document.querySelector('.custom_parcel').style.display = 'none';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
