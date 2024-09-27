@@ -1,58 +1,3 @@
-// window.twinpxYadelivery = window.twinpxYadelivery || {};
-
-// //Открытие окна ПВЗ
-// window.twinpxYadelivery.onPvzPopupShow = () => {
-//   console.log('onPvzPopupShow');
-// };
-// //Закрытие окна ПВЗ
-// window.twinpxYadelivery.onPvzPopupClose = () => {
-//   console.log('onPvzPopupClose');
-// };
-// //Загрузка карты в окне ПВЗ
-// window.twinpxYadelivery.onPvzYmapLoad = () => {
-//   console.log('onPvzYmapLoad');
-// };
-// //Загрузка ПВЗ
-// window.twinpxYadelivery.onPvzLoad = () => {
-//   console.log('onPvzLoad');
-// };
-// //Нажатие на точку на карте в окне ПВЗ
-// window.twinpxYadelivery.onPvzPlacemarkClick = () => {
-//   console.log('onPvzPlacemarkClick');
-// };
-// //Нажатие на Выбрать ПВЗ в правом столбце
-// window.twinpxYadelivery.onPvzSelect = () => {
-//   console.log('onPvzSelect');
-// };
-// //Нажатие Вернуться к списку ПВЗ
-// window.twinpxYadelivery.onPvzBackClick = () => {
-//   console.log('onPvzBackClick');
-// };
-// //Загрузка офферов выбранного ПВЗ
-// window.twinpxYadelivery.onPvzOffersLoad = () => {
-//   console.log('onPvzOffersLoad');
-// };
-// //Нажатие на Выбрать оффер выбранного ПВЗ
-// window.twinpxYadelivery.onPvzOfferSelect = () => {
-//   console.log('onPvzOfferSelect');
-// };
-// //Открытие окна курьерской доставки
-// window.twinpxYadelivery.onCourierPopupShow = () => {
-//   console.log('onCourierPopupShow');
-// };
-// //Закрытие окна курьерской доставки
-// window.twinpxYadelivery.onCourierPopupClose = () => {
-//   console.log('onCourierPopupClose');
-// };
-// //Загрузка офферов курьерской доставки
-// window.twinpxYadelivery.onCourierOffersLoad = () => {
-//   console.log('onCourierOffersLoad');
-// };
-// //Нажатие на Выбрать оффер курьерской доставки
-// window.twinpxYadelivery.onCourierOfferSelect = () => {
-//   console.log('onCourierOfferSelect');
-// };
-
 // window.twinpxYadelivery.pvzPopupShow();
 // window.twinpxYadelivery.pvzPopupClose();
 // window.twinpxYadelivery.pvzLoad();
@@ -582,7 +527,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
         window.twinpxYadelivery &&
         window.twinpxYadelivery.onCourierOfferSelect
       ) {
-        window.twinpxYadelivery.onCourierOfferSelect();
+        window.twinpxYadelivery.onCourierOfferSelect(jsonStr);
       }
     }
   });
@@ -958,7 +903,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
               window.twinpxYadelivery &&
               window.twinpxYadelivery.onCourierOffersLoad
             ) {
-              window.twinpxYadelivery.onCourierOffersLoad();
+              window.twinpxYadelivery.onCourierOffersLoad(result.OFFERS);
             }
           } else {
             offersError(BX.message('TWINPX_JS_EMPTY_OFFER'));
@@ -975,7 +920,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
     //custom callback
     if (window.twinpxYadelivery && window.twinpxYadelivery.onCourierPopupShow) {
-      window.twinpxYadelivery.onCourierPopupShow();
+      window.twinpxYadelivery.onCourierPopupShow(courierPopup);
     }
   }
 
@@ -988,7 +933,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
       window.twinpxYadelivery &&
       window.twinpxYadelivery.onCourierPopupClose
     ) {
-      window.twinpxYadelivery.onCourierPopupClose();
+      window.twinpxYadelivery.onCourierPopupClose(courierPopup);
     }
   }
 }
@@ -1191,7 +1136,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     //custom callback
     if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzPopupShow) {
-      window.twinpxYadelivery.onPvzPopupShow();
+      window.twinpxYadelivery.onPvzPopupShow(pvzPopup);
     }
   }
 
@@ -1201,7 +1146,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     //custom callback
     if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzPopupClose) {
-      window.twinpxYadelivery.onPvzPopupClose();
+      window.twinpxYadelivery.onPvzPopupClose(pvzPopup);
     }
   }
 
@@ -1413,7 +1358,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     //custom callback
     if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzSelect) {
-      window.twinpxYadelivery.onPvzSelect();
+      window.twinpxYadelivery.onPvzSelect(JSON.parse(jsonString));
     }
   }
 
@@ -1444,7 +1389,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
       window.twinpxYadelivery &&
       window.twinpxYadelivery.onPvzPlacemarkClick
     ) {
-      window.twinpxYadelivery.onPvzPlacemarkClick();
+      window.twinpxYadelivery.onPvzPlacemarkClick(map, jsonObject, coords);
     }
   }
 
@@ -1619,7 +1564,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
               window.twinpxYadelivery &&
               window.twinpxYadelivery.onPvzOffersLoad
             ) {
-              window.twinpxYadelivery.onPvzOffersLoad();
+              window.twinpxYadelivery.onPvzOffersLoad(result.OFFERS);
             }
           } else {
             offersError(BX.message('TWINPX_JS_EMPTY_OFFER'));
@@ -1864,11 +1809,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
           //insert button if needed
           window.twinpxYadeliveryInsertButton();
         }
-      }
 
-      //custom callback
-      if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzOfferSelect) {
-        window.twinpxYadelivery.onPvzOfferSelect();
+        //custom callback
+        if (
+          window.twinpxYadelivery &&
+          window.twinpxYadelivery.onPvzOfferSelect
+        ) {
+          window.twinpxYadelivery.onPvzOfferSelect(JSON.parse(jsonStr));
+        }
       }
     }
 
@@ -1919,7 +1867,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
             window.twinpxYadelivery &&
             window.twinpxYadelivery.onPvzYmapLoad
           ) {
-            window.twinpxYadelivery.onPvzYmapLoad();
+            window.twinpxYadelivery.onPvzYmapLoad(map);
           }
 
           if (window.matchMedia('(min-width: 1077px)').matches) {
@@ -2106,7 +2054,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
                         window.twinpxYadelivery &&
                         window.twinpxYadelivery.onPvzLoad
                       ) {
-                        window.twinpxYadelivery.onPvzLoad();
+                        window.twinpxYadelivery.onPvzLoad(result.POINTS);
                       }
                     } else {
                       pointsError(BX.message('TWINPX_JS_EMPTY_OFFER'));
