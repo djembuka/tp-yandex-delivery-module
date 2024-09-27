@@ -1,3 +1,67 @@
+// window.twinpxYadelivery = window.twinpxYadelivery || {};
+
+// //Открытие окна ПВЗ
+// window.twinpxYadelivery.onPvzPopupShow = () => {
+//   console.log('onPvzPopupShow');
+// };
+// //Закрытие окна ПВЗ
+// window.twinpxYadelivery.onPvzPopupClose = () => {
+//   console.log('onPvzPopupClose');
+// };
+// //Загрузка карты в окне ПВЗ
+// window.twinpxYadelivery.onPvzYmapLoad = () => {
+//   console.log('onPvzYmapLoad');
+// };
+// //Загрузка ПВЗ
+// window.twinpxYadelivery.onPvzLoad = () => {
+//   console.log('onPvzLoad');
+// };
+// //Нажатие на точку на карте в окне ПВЗ
+// window.twinpxYadelivery.onPvzPlacemarkClick = () => {
+//   console.log('onPvzPlacemarkClick');
+// };
+// //Нажатие на Выбрать ПВЗ в правом столбце
+// window.twinpxYadelivery.onPvzSelect = () => {
+//   console.log('onPvzSelect');
+// };
+// //Нажатие Вернуться к списку ПВЗ
+// window.twinpxYadelivery.onPvzBackClick = () => {
+//   console.log('onPvzBackClick');
+// };
+// //Загрузка офферов выбранного ПВЗ
+// window.twinpxYadelivery.onPvzOffersLoad = () => {
+//   console.log('onPvzOffersLoad');
+// };
+// //Нажатие на Выбрать оффер выбранного ПВЗ
+// window.twinpxYadelivery.onPvzOfferSelect = () => {
+//   console.log('onPvzOfferSelect');
+// };
+// //Открытие окна курьерской доставки
+// window.twinpxYadelivery.onCourierPopupShow = () => {
+//   console.log('onCourierPopupShow');
+// };
+// //Закрытие окна курьерской доставки
+// window.twinpxYadelivery.onCourierPopupClose = () => {
+//   console.log('onCourierPopupClose');
+// };
+// //Загрузка офферов курьерской доставки
+// window.twinpxYadelivery.onCourierOffersLoad = () => {
+//   console.log('onCourierOffersLoad');
+// };
+// //Нажатие на Выбрать оффер курьерской доставки
+// window.twinpxYadelivery.onCourierOfferSelect = () => {
+//   console.log('onCourierOfferSelect');
+// };
+
+// window.twinpxYadelivery.pvzPopupShow();
+// window.twinpxYadelivery.pvzPopupClose();
+// window.twinpxYadelivery.pvzLoad();
+// window.twinpxYadelivery.pvzOffersLoad();
+
+// window.twinpxYadelivery.courierPopupShow();
+// window.twinpxYadelivery.courierPopupClose();
+// window.twinpxYadelivery.courierOffersLoad();
+
 (function () {
   let counter = 0;
   let intervalId = setInterval(() => {
@@ -512,6 +576,14 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
       //insert button if needed
       window.twinpxYadeliveryInsertButton();
+
+      //custom callback
+      if (
+        window.twinpxYadelivery &&
+        window.twinpxYadelivery.onCourierOfferSelect
+      ) {
+        window.twinpxYadelivery.onCourierOfferSelect();
+      }
     }
   });
 
@@ -880,6 +952,14 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
             setTimeout(() => {
               showOfferElem.classList.add('yd-popup-offers--animate');
             }, 0);
+
+            //custom callback
+            if (
+              window.twinpxYadelivery &&
+              window.twinpxYadelivery.onCourierOffersLoad
+            ) {
+              window.twinpxYadelivery.onCourierOffersLoad();
+            }
           } else {
             offersError(BX.message('TWINPX_JS_EMPTY_OFFER'));
           }
@@ -892,11 +972,24 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
     }
 
     courierPopup.adjustPosition();
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onCourierPopupShow) {
+      window.twinpxYadelivery.onCourierPopupShow();
+    }
   }
 
   function courierPopupClose() {
     courierPopup.destroy();
     pageScroll(true);
+
+    //custom callback
+    if (
+      window.twinpxYadelivery &&
+      window.twinpxYadelivery.onCourierPopupClose
+    ) {
+      window.twinpxYadelivery.onCourierPopupClose();
+    }
   }
 }
 
@@ -1095,11 +1188,21 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     } catch (err) {
       throw err;
     }
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzPopupShow) {
+      window.twinpxYadelivery.onPvzPopupShow();
+    }
   }
 
   function pvzPopupClose() {
     pvzPopup.destroy();
     pageScroll(true);
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzPopupClose) {
+      window.twinpxYadelivery.onPvzPopupClose();
+    }
   }
 
   function elemLoader(elem, flag) {
@@ -1307,6 +1410,11 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     //active button
     setBtnActive(1);
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzSelect) {
+      window.twinpxYadelivery.onPvzSelect();
+    }
   }
 
   function clickPlacemark(jsonObject, map, coords) {
@@ -1330,6 +1438,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     ydPopupDetail.innerHTML = '';
 
     showOffers({ jsonObject, map, coords, itemsArray });
+
+    //custom callback
+    if (
+      window.twinpxYadelivery &&
+      window.twinpxYadelivery.onPvzPlacemarkClick
+    ) {
+      window.twinpxYadelivery.onPvzPlacemarkClick();
+    }
   }
 
   async function showOffers({ jsonObject, map, coords, itemsArray, props }) {
@@ -1497,6 +1613,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
             setTimeout(() => {
               pvzPopup.adjustPosition();
             }, 100);
+
+            //custom callback
+            if (
+              window.twinpxYadelivery &&
+              window.twinpxYadelivery.onPvzOffersLoad
+            ) {
+              window.twinpxYadelivery.onPvzOffersLoad();
+            }
           } else {
             offersError(BX.message('TWINPX_JS_EMPTY_OFFER'));
           }
@@ -1741,6 +1865,11 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
           window.twinpxYadeliveryInsertButton();
         }
       }
+
+      //custom callback
+      if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzOfferSelect) {
+        window.twinpxYadelivery.onPvzOfferSelect();
+      }
     }
 
     //ymaps
@@ -1784,6 +1913,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
               suppressMapOpenBlock: true,
             }
           );
+
+          //custom callback
+          if (
+            window.twinpxYadelivery &&
+            window.twinpxYadelivery.onPvzYmapLoad
+          ) {
+            window.twinpxYadelivery.onPvzYmapLoad();
+          }
 
           if (window.matchMedia('(min-width: 1077px)').matches) {
             let zoomControl = new ymaps.control.ZoomControl();
@@ -1963,6 +2100,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
                       ) {
                         onBoundsChange();
                       }
+
+                      //custom callback
+                      if (
+                        window.twinpxYadelivery &&
+                        window.twinpxYadelivery.onPvzLoad
+                      ) {
+                        window.twinpxYadelivery.onPvzLoad();
+                      }
                     } else {
                       pointsError(BX.message('TWINPX_JS_EMPTY_OFFER'));
                     }
@@ -1986,6 +2131,11 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         //show sorted
         if (Object.values(pointsNodesArray).find((value) => value.sorted)) {
           ydPopupWrapper.classList.add('yd-popup-list-wrapper--sorted');
+        }
+
+        //custom callback
+        if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzBackClick) {
+          window.twinpxYadelivery.onPvzBackClick();
         }
       });
 
@@ -2139,3 +2289,6 @@ function twinpxYadeliverySerializeForm(form) {
 
   return result.substring(1);
 }
+
+//custom events and methods
+window.twinpxYadelivery = window.twinpxYadelivery || {};
