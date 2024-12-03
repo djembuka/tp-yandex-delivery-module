@@ -949,5 +949,5 @@ button.yd-popup-form__btn:hover {
   }
 }
 
-#content.wraps.hover_shine .bx-soa-pp .bx-soa-pp-company-item {display: grid;}
-#content.wraps.hover_shine p.twpx_btn_wrapper {margin-bottom: 0;}
+#content.wraps.hover_shine #bx-soa-delivery .bx-soa-pp .bx-soa-pp-company-item {display: grid;}
+#content.wraps.hover_shine #bx-soa-delivery p.twpx_btn_wrapper {margin-bottom: 0;}
