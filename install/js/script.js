@@ -491,6 +491,52 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
     </div>
   `;
 
+  twpxYadeliveryElem
+    .querySelector('#ydFormPhone')
+    .addEventListener('keydown', (e) => {
+      const input = e.target;
+      let key = e.key;
+      let not = key.replace(/([0-9])/, 1);
+
+      if (not == 1) {
+        if (input.value.length < 4 || input.value === '') {
+          input.value = '+7 (';
+        }
+        if (input.value.length === 7) {
+          input.value = input.value + ') ';
+        }
+        if (input.value.length === 12) {
+          input.value = input.value + '-';
+        }
+        if (input.value.length === 15) {
+          input.value = input.value + '-';
+        }
+        if (input.value.length >= 18) {
+          input.value = input.value.substring(0, 17);
+        }
+      } else if ('Backspace' !== not && 'Tab' !== not) {
+        e.preventDefault();
+      }
+    });
+
+  twpxYadeliveryElem
+    .querySelector('#ydFormPhone')
+    .addEventListener('focus', (e) => {
+      const input = e.target;
+      if (input.value === '') {
+        input.value = '+7 (';
+      }
+    });
+
+  twpxYadeliveryElem
+    .querySelector('#ydFormPhone')
+    .addEventListener('blur', (e) => {
+      const input = e.target;
+      if (input.value === '+7 (') {
+        input.value = '';
+      }
+    });
+
   errorMessageElem = twpxYadeliveryElem.querySelector(
     '.yd-popup-error-message'
   );
@@ -590,7 +636,15 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
         if (orderFormControls) {
           orderFormControls.forEach((orderFormControl) => {
-            orderFormControl.value = formControl.value;
+            if (formControl.getAttribute('type') === 'tel') {
+              let phone = formControl.value.replace(/\D/g, '').substr(0, 13);
+              if (phone.substr(0, 1)) {
+                phone = `7${phone.substr(1)}`;
+              }
+              orderFormControl.value = phone;
+            } else {
+              orderFormControl.value = formControl.value;
+            }
           });
         }
       });
@@ -1092,6 +1146,53 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
   async function pvzPopupShow() {
     pageScroll(false);
+
+    //phone input
+    document
+      .querySelector('#ydPopup #ydFormPhone')
+      .addEventListener('keydown', (e) => {
+        const input = e.target;
+        let key = e.key;
+        let not = key.replace(/([0-9])/, 1);
+
+        if (not == 1) {
+          if (input.value.length < 4 || input.value === '') {
+            input.value = '+7 (';
+          }
+          if (input.value.length === 7) {
+            input.value = input.value + ') ';
+          }
+          if (input.value.length === 12) {
+            input.value = input.value + '-';
+          }
+          if (input.value.length === 15) {
+            input.value = input.value + '-';
+          }
+          if (input.value.length >= 18) {
+            input.value = input.value.substring(0, 17);
+          }
+        } else if ('Backspace' !== not && 'Tab' !== not) {
+          e.preventDefault();
+        }
+      });
+
+    document
+      .querySelector('#ydPopup #ydFormPhone')
+      .addEventListener('focus', (e) => {
+        const input = e.target;
+        if (input.value === '') {
+          input.value = '+7 (';
+        }
+      });
+
+    document
+      .querySelector('#ydPopup #ydFormPhone')
+      .addEventListener('blur', (e) => {
+        const input = e.target;
+        if (input.value === '+7 (') {
+          input.value = '';
+        }
+      });
 
     //show error if there is no api ymaps key
     if (!window.twinpxYadeliveryYmapsAPI) {
@@ -1682,7 +1783,15 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
           if (orderFormControls) {
             orderFormControls.forEach((orderFormControl) => {
-              orderFormControl.value = formControl.value;
+              if (formControl.getAttribute('type') === 'tel') {
+                let phone = formControl.value.replace(/\D/g, '').substr(0, 13);
+                if (phone.substr(0, 1)) {
+                  phone = `7${phone.substr(1)}`;
+                }
+                orderFormControl.value = phone;
+              } else {
+                orderFormControl.value = formControl.value;
+              }
             });
           }
         });
