@@ -827,12 +827,15 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
     //tel length < 13
     formElem.querySelectorAll('[type=tel]').forEach((telInput) => {
-      let digits = telInput.value.match(/\d+(\.\d+)?/g);
+      if (!telInput.instance) return;
+
+      let digits = telInput.instance.val;
+
       if (
         telInput.getAttribute('required') === '' ||
         telInput.value.trim() !== ''
       ) {
-        if (!digits || digits.join('').length >= 13) {
+        if (digits.length < 11 || digits.length > 11) {
           if (!focusElement) {
             focusElement = telInput;
           }
@@ -2353,14 +2356,17 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
       });
     });
 
-    //tel length < 13
+    //tel length < 11
     formElem.querySelectorAll('[type=tel]').forEach((telInput) => {
-      let digits = telInput.value.match(/\d+(\.\d+)?/g);
+      if (!telInput.instance) return;
+
+      let digits = telInput.instance.val;
+
       if (
         telInput.getAttribute('required') === '' ||
         telInput.value.trim() !== ''
       ) {
-        if (!digits || digits.join('').length >= 13) {
+        if (digits.length < 11 || digits.length > 11) {
           if (!focusElement) {
             focusElement = telInput;
           }
