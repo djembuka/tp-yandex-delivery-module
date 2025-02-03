@@ -704,13 +704,19 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
         if (orderFormControls) {
           orderFormControls.forEach((orderFormControl) => {
-            if (
-              formControl.getAttribute('data-code') === 'PropPhone' &&
-              formControl.instance
-            ) {
-              orderFormControl.value = formControl.instance.val;
-            } else {
-              orderFormControl.value = formControl.value;
+            formControl.isChanged =
+              String(formControl.value).trim() !==
+              String(formControl.old).trim();
+
+            if (formControl.isChanged) {
+              if (
+                formControl.getAttribute('data-code') === 'PropPhone' &&
+                formControl.instance
+              ) {
+                orderFormControl.value = formControl.instance.val;
+              } else {
+                orderFormControl.value = formControl.value;
+              }
             }
           });
         }
@@ -735,8 +741,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
       //try to load offers again
       let props = '';
       for (let i = 0; i < formElem.elements.length; i++) {
-        let element = formElem.elements[i],
-          code = formElem.elements[i].getAttribute('data-code');
+        let code = formElem.elements[i].getAttribute('data-code');
         if (code) {
           props += `${i !== 0 ? '&' : ''}${code}=${formElem.elements[i].value}`;
         }
@@ -963,6 +968,8 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
                 } else {
                   errorFormControl.value = value;
                 }
+
+                errorFormControl.old = errorFormControl.value;
 
                 //set name attribute
                 errorFormControl.setAttribute('name', result.FIELDS[key]);
@@ -1636,6 +1643,9 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
                     errorFormControl.value = value;
                   }
                 }
+
+                errorFormControl.old = errorFormControl.value;
+
                 if (
                   !slideErrorFormControl.getAttribute('type') ||
                   slideErrorFormControl.getAttribute('type') !== 'hidden'
@@ -1646,6 +1656,8 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
                     slideErrorFormControl.value = value;
                   }
                 }
+
+                slideErrorFormControl.old = slideErrorFormControl.value;
 
                 //set name attribute
                 errorFormControl.setAttribute('name', result.FIELDS[key]);
@@ -1831,13 +1843,19 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
           if (orderFormControls) {
             orderFormControls.forEach((orderFormControl) => {
-              if (
-                formControl.getAttribute('data-code') === 'PropPhone' &&
-                formControl.instance
-              ) {
-                orderFormControl.value = formControl.instance.val;
-              } else {
-                orderFormControl.value = formControl.value;
+              formControl.isChanged =
+                String(formControl.value).trim() !==
+                String(formControl.old).trim();
+
+              if (formControl.isChanged) {
+                if (
+                  formControl.getAttribute('data-code') === 'PropPhone' &&
+                  formControl.instance
+                ) {
+                  orderFormControl.value = formControl.instance.val;
+                } else {
+                  orderFormControl.value = formControl.value;
+                }
               }
             });
           }
