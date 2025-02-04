@@ -950,7 +950,8 @@ button.yd-popup-form__btn:hover {
 }
 
 #content.wraps.hover_shine #bx-soa-delivery .bx-soa-pp .bx-soa-pp-company-item,
-#bx-soa-delivery .bx-soa-pp-item-container.grid-list .bx-soa-pp-company-item {
+#bx-soa-delivery .bx-soa-pp-item-container.grid-list .bx-soa-pp-company-item,
+#bx-soa-order-main.orderform--v2 #bx-soa-delivery .bx-soa-pp-company-item {
   display: grid;
 }
 

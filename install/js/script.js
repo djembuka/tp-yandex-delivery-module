@@ -713,7 +713,9 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
                 formControl.getAttribute('data-code') === 'PropPhone' &&
                 formControl.instance
               ) {
-                orderFormControl.value = formControl.instance.val;
+                orderFormControl.value = orderFormControl.inputmask
+                  ? formControl.instance.val.substring(1)
+                  : formControl.instance.val;
               } else {
                 orderFormControl.value = formControl.value;
               }
@@ -1852,7 +1854,9 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
                   formControl.getAttribute('data-code') === 'PropPhone' &&
                   formControl.instance
                 ) {
-                  orderFormControl.value = formControl.instance.val;
+                  orderFormControl.value = orderFormControl.inputmask
+                    ? formControl.instance.val.substring(1)
+                    : formControl.instance.val;
                 } else {
                   orderFormControl.value = formControl.value;
                 }
