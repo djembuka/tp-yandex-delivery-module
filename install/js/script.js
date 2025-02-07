@@ -161,6 +161,14 @@ class InputTelMaskGetSetValue {
       clearInterval(intervalId);
     }
   }, 200);
+
+  BX.ready(() => {
+    BX.addCustomEvent('onAjaxSuccess', (response) => {
+      if (BX.PopupWindowManager.getCurrentPopup()) {
+        BX.PopupWindowManager.getCurrentPopup().adjustPosition();
+      }
+    });
+  });
 })();
 
 window.twinpxYadeliveryFetchURL =
@@ -1889,11 +1897,9 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         let props = '';
         for (let i = 0; i < formElem.elements.length; i++) {
           let element = formElem.elements[i],
-            code = formElem.elements[i].getAttribute('data-code');
+            code = element.getAttribute('data-code');
           if (code) {
-            props += `${i !== 0 ? '&' : ''}${code}=${
-              formElem.elements[i].value
-            }`;
+            props += `${i !== 0 ? '&' : ''}${code}=${element.value}`;
           }
         }
         showOffers({ jsonObject, map, coords, props });
