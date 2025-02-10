@@ -165,7 +165,9 @@ class InputTelMaskGetSetValue {
   BX.ready(() => {
     BX.addCustomEvent('onAjaxSuccess', (response) => {
       if (BX.PopupWindowManager.getCurrentPopup()) {
-        BX.PopupWindowManager.getCurrentPopup().adjustPosition();
+        setTimeout(() => {
+          BX.PopupWindowManager.getCurrentPopup().adjustPosition();
+        }, 100);
       }
     });
   });
