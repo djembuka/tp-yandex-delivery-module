@@ -162,6 +162,7 @@ class InputTelMaskGetSetValue {
     }
   }, 200);
 
+  //to prevent popup moving down
   BX.ready(() => {
     BX.addCustomEvent('onAjaxSuccess', (response) => {
       if (BX.PopupWindowManager.getCurrentPopup()) {
