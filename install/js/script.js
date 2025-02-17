@@ -1,3 +1,115 @@
+//input tel in popups
+class InputTelMaskGetSetValue {
+  constructor(input) {
+    this.input = input;
+    this.instance = true;
+    this.input.instance = this;
+    this.init();
+  }
+
+  init() {
+    this.input.addEventListener('focus', () => {
+      this.focus();
+    });
+    this.input.addEventListener('blur', () => {
+      this.blur();
+    });
+    this.input.addEventListener('keydown', (e) => this.keydown(e));
+  }
+
+  focus() {
+    if (this.input.value === '') {
+      this.input.value = '+7 (';
+    }
+  }
+
+  blur() {
+    if (this.input.value === '+7 (') {
+      this.input.value = '';
+    }
+  }
+
+  keydown(e) {
+    let key = e.key;
+    let not = key.replace(/([0-9])/, 1);
+
+    if (not == 1) {
+      if (this.input.value.length < 4 || this.input.value === '') {
+        this.input.value = '+7 (';
+      }
+      if (this.input.value.length === 7) {
+        this.input.value = this.input.value + ') ';
+      }
+      if (this.input.value.length === 12) {
+        this.input.value = this.input.value + '-';
+      }
+      if (this.input.value.length === 15) {
+        this.input.value = this.input.value + '-';
+      }
+      if (this.input.value.length >= 18) {
+        this.input.value = this.input.value.substring(0, 17);
+      }
+    } else if ('Backspace' !== not && 'Tab' !== not) {
+      e.preventDefault();
+    }
+  }
+
+  get val() {
+    let phone = this.input.value.replace(/\D/g, '').substr(0, 11);
+    let first = phone.substr(0, 1);
+    if (phone.length > 0 && phone.length < 11) {
+      phone = `${first !== '7' ? '7' : ''}${phone}`;
+    } else if (first && first !== '7') {
+      phone = `7${phone.substr(1)}`;
+    }
+
+    return phone;
+  }
+
+  set val(value) {
+    let phone = value.replace(/\D/g, '').substr(0, 11);
+    let first = phone.substr(0, 1);
+    if (phone.length > 0 && phone.length < 11) {
+      phone = `${first !== '7' ? '7' : ''}${phone}`;
+    } else if (first && first !== '7') {
+      phone = `7${phone.substr(1)}`;
+    }
+
+    let result = '';
+
+    if (phone.substr(0, 1)) {
+      result += `+${phone.substr(0, 1)}`;
+    }
+    if (phone.substr(1, 1)) {
+      result += ' (';
+    }
+    result += phone.substr(1, 3);
+    if (phone.substr(3, 1)) {
+      result += ') ';
+    }
+    result += phone.substr(4, 3);
+    if (phone.substr(7, 1)) {
+      result += '-';
+    }
+    result += phone.substr(7, 2);
+    if (phone.substr(9, 1)) {
+      result += '-';
+    }
+    result += phone.substr(9, 2);
+
+    this.input.value = result;
+  }
+}
+
+// window.twinpxYadelivery.pvzPopupShow();
+// window.twinpxYadelivery.pvzPopupClose();
+// window.twinpxYadelivery.pvzLoad();
+// window.twinpxYadelivery.pvzOffersLoad();
+
+// window.twinpxYadelivery.courierPopupShow();
+// window.twinpxYadelivery.courierPopupClose();
+// window.twinpxYadelivery.courierOffersLoad();
+
 (function () {
   let counter = 0;
   let intervalId = setInterval(() => {
@@ -49,6 +161,17 @@
       clearInterval(intervalId);
     }
   }, 200);
+
+  //to prevent popup moving down
+  BX.ready(() => {
+    BX.addCustomEvent('onAjaxSuccess', (response) => {
+      if (BX.PopupWindowManager.getCurrentPopup()) {
+        setTimeout(() => {
+          BX.PopupWindowManager.getCurrentPopup().adjustPosition();
+        }, 100);
+      }
+    });
+  });
 })();
 
 window.twinpxYadeliveryFetchURL =
@@ -97,7 +220,7 @@ window.twinpxYadeliveryFindBtnObject = function () {
         id = checkbox.id;
       }
     });
-  
+
   if (document.getElementById(id)) {
     block = document.getElementById(id).closest('.bx-soa-pp-company');
   }
@@ -274,6 +397,9 @@ window.addEventListener('DOMContentLoaded', () => {
   //check the yandexDelivery
   if (document.querySelector('#bx-soa-order')) {
     document.querySelector('#bx-soa-order').addEventListener('click', (e) => {
+      if (e.target.closest('.bx-soa-pp-desc-container')) {
+        return;
+      }
       let block = e.target.closest('.bx-soa-pp-company');
       if (
         block &&
@@ -382,8 +508,8 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
     fields = twinpxYadeliverySerializeForm(bxSoaOrderForm),
     twpxYadeliveryElem = document.createElement('div'),
     showOfferElem,
-    courierPopup;
-  fetchTimeout = 20000;
+    courierPopup,
+    fetchTimeout = 20000;
 
   twpxYadeliveryElem.id = 'twpx_yadelivery';
   twpxYadeliveryElem.classList.add('twpx_yadelivery');
@@ -479,6 +605,17 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
     </div>
   `;
 
+  //phone input
+  if (InputTelMaskGetSetValue) {
+    twpxYadeliveryElem
+      .querySelectorAll('[data-code="PropPhone"]')
+      .forEach((telInput) => {
+        if (!telInput.instance) {
+          new InputTelMaskGetSetValue(telInput);
+        }
+      });
+  }
+
   errorMessageElem = twpxYadeliveryElem.querySelector(
     '.yd-popup-error-message'
   );
@@ -509,6 +646,14 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
       //insert button if needed
       window.twinpxYadeliveryInsertButton();
+
+      //custom callback
+      if (
+        window.twinpxYadelivery &&
+        window.twinpxYadelivery.onCourierOfferSelect
+      ) {
+        window.twinpxYadelivery.onCourierOfferSelect(jsonStr);
+      }
     }
   });
 
@@ -570,7 +715,22 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
         if (orderFormControls) {
           orderFormControls.forEach((orderFormControl) => {
-            orderFormControl.value = formControl.value;
+            formControl.isChanged =
+              String(formControl.value).trim() !==
+              String(formControl.old).trim();
+
+            if (formControl.isChanged) {
+              if (
+                formControl.getAttribute('data-code') === 'PropPhone' &&
+                formControl.instance
+              ) {
+                orderFormControl.value = orderFormControl.inputmask
+                  ? formControl.instance.val.substring(1)
+                  : formControl.instance.val;
+              } else {
+                orderFormControl.value = formControl.value;
+              }
+            }
           });
         }
       });
@@ -594,8 +754,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
       //try to load offers again
       let props = '';
       for (let i = 0; i < formElem.elements.length; i++) {
-        let element = formElem.elements[i],
-          code = formElem.elements[i].getAttribute('data-code');
+        let code = formElem.elements[i].getAttribute('data-code');
         if (code) {
           props += `${i !== 0 ? '&' : ''}${code}=${formElem.elements[i].value}`;
         }
@@ -686,12 +845,15 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
     //tel length < 13
     formElem.querySelectorAll('[type=tel]').forEach((telInput) => {
-      let digits = telInput.value.match(/\d+(\.\d+)?/g);
+      if (!telInput.instance) return;
+
+      let digits = telInput.instance.val;
+
       if (
         telInput.getAttribute('required') === '' ||
         telInput.value.trim() !== ''
       ) {
-        if (!digits || digits.join('').length >= 13) {
+        if (digits.length < 11 || digits.length > 11) {
           if (!focusElement) {
             focusElement = telInput;
           }
@@ -813,7 +975,14 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
                     value = formControl.value;
                   }
                 });
-                errorFormControl.value = value;
+
+                if (key === 'PropPhone' && errorFormControl.instance) {
+                  errorFormControl.instance.val = value;
+                } else {
+                  errorFormControl.value = value;
+                }
+
+                errorFormControl.old = errorFormControl.value;
 
                 //set name attribute
                 errorFormControl.setAttribute('name', result.FIELDS[key]);
@@ -850,7 +1019,16 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
                     }
                   });
               } else if (addressBlock) {
-                addressBlock.remove();
+                // show only controls with data-prop equal to result.FIELDS
+                addressBlock
+                  .closest('.yd-popup-form')
+                  .querySelectorAll('[data-code]')
+                  .forEach((control) => {
+                    const code = control.getAttribute('data-code');
+                    if (!result.FIELDS[code]) {
+                      control.closest('.b-float-label').remove();
+                    }
+                  });
               }
 
               //validate inputs
@@ -868,6 +1046,14 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
             setTimeout(() => {
               showOfferElem.classList.add('yd-popup-offers--animate');
             }, 0);
+
+            //custom callback
+            if (
+              window.twinpxYadelivery &&
+              window.twinpxYadelivery.onCourierOffersLoad
+            ) {
+              window.twinpxYadelivery.onCourierOffersLoad(result.OFFERS);
+            }
           } else {
             offersError(BX.message('TWINPX_JS_EMPTY_OFFER'));
           }
@@ -880,11 +1066,24 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
     }
 
     courierPopup.adjustPosition();
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onCourierPopupShow) {
+      window.twinpxYadelivery.onCourierPopupShow(courierPopup);
+    }
   }
 
   function courierPopupClose() {
     courierPopup.destroy();
     pageScroll(true);
+
+    //custom callback
+    if (
+      window.twinpxYadelivery &&
+      window.twinpxYadelivery.onCourierPopupClose
+    ) {
+      window.twinpxYadelivery.onCourierPopupClose(courierPopup);
+    }
   }
 }
 
@@ -1043,6 +1242,18 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
   async function pvzPopupShow() {
     pageScroll(false);
 
+    //phone input
+    if (InputTelMaskGetSetValue) {
+      document
+        .querySelector('#ydPopup')
+        .querySelectorAll('[data-code="PropPhone"]')
+        .forEach((telInput) => {
+          if (!telInput.instance) {
+            new InputTelMaskGetSetValue(telInput);
+          }
+        });
+    }
+
     //show error if there is no api ymaps key
     if (!window.twinpxYadeliveryYmapsAPI) {
       document
@@ -1083,11 +1294,21 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     } catch (err) {
       throw err;
     }
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzPopupShow) {
+      window.twinpxYadelivery.onPvzPopupShow(pvzPopup);
+    }
   }
 
   function pvzPopupClose() {
     pvzPopup.destroy();
     pageScroll(true);
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzPopupClose) {
+      window.twinpxYadelivery.onPvzPopupClose(pvzPopup);
+    }
   }
 
   function elemLoader(elem, flag) {
@@ -1295,6 +1516,11 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     //active button
     setBtnActive(1);
+
+    //custom callback
+    if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzSelect) {
+      window.twinpxYadelivery.onPvzSelect(JSON.parse(jsonString));
+    }
   }
 
   function clickPlacemark(jsonObject, map, coords) {
@@ -1318,6 +1544,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     ydPopupDetail.innerHTML = '';
 
     showOffers({ jsonObject, map, coords, itemsArray });
+
+    //custom callback
+    if (
+      window.twinpxYadelivery &&
+      window.twinpxYadelivery.onPvzPlacemarkClick
+    ) {
+      window.twinpxYadelivery.onPvzPlacemarkClick(map, jsonObject, coords);
+    }
   }
 
   async function showOffers({ jsonObject, map, coords, itemsArray, props }) {
@@ -1416,14 +1650,27 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
                   !errorFormControl.getAttribute('type') ||
                   errorFormControl.getAttribute('type') !== 'hidden'
                 ) {
-                  errorFormControl.value = value;
+                  if (key === 'PropPhone' && errorFormControl.instance) {
+                    errorFormControl.instance.val = value;
+                  } else {
+                    errorFormControl.value = value;
+                  }
                 }
+
+                errorFormControl.old = errorFormControl.value;
+
                 if (
                   !slideErrorFormControl.getAttribute('type') ||
                   slideErrorFormControl.getAttribute('type') !== 'hidden'
                 ) {
-                  slideErrorFormControl.value = value;
+                  if (key === 'PropPhone' && slideErrorFormControl.instance) {
+                    slideErrorFormControl.instance.val = value;
+                  } else {
+                    slideErrorFormControl.value = value;
+                  }
                 }
+
+                slideErrorFormControl.old = slideErrorFormControl.value;
 
                 //set name attribute
                 errorFormControl.setAttribute('name', result.FIELDS[key]);
@@ -1485,6 +1732,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
             setTimeout(() => {
               pvzPopup.adjustPosition();
             }, 100);
+
+            //custom callback
+            if (
+              window.twinpxYadelivery &&
+              window.twinpxYadelivery.onPvzOffersLoad
+            ) {
+              window.twinpxYadelivery.onPvzOffersLoad(result.OFFERS);
+            }
           } else {
             offersError(BX.message('TWINPX_JS_EMPTY_OFFER'));
           }
@@ -1601,7 +1856,22 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
           if (orderFormControls) {
             orderFormControls.forEach((orderFormControl) => {
-              orderFormControl.value = formControl.value;
+              formControl.isChanged =
+                String(formControl.value).trim() !==
+                String(formControl.old).trim();
+
+              if (formControl.isChanged) {
+                if (
+                  formControl.getAttribute('data-code') === 'PropPhone' &&
+                  formControl.instance
+                ) {
+                  orderFormControl.value = orderFormControl.inputmask
+                    ? formControl.instance.val.substring(1)
+                    : formControl.instance.val;
+                } else {
+                  orderFormControl.value = formControl.value;
+                }
+              }
             });
           }
         });
@@ -1630,11 +1900,9 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         let props = '';
         for (let i = 0; i < formElem.elements.length; i++) {
           let element = formElem.elements[i],
-            code = formElem.elements[i].getAttribute('data-code');
+            code = element.getAttribute('data-code');
           if (code) {
-            props += `${i !== 0 ? '&' : ''}${code}=${
-              formElem.elements[i].value
-            }`;
+            props += `${i !== 0 ? '&' : ''}${code}=${element.value}`;
           }
         }
         showOffers({ jsonObject, map, coords, props });
@@ -1728,6 +1996,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
           //insert button if needed
           window.twinpxYadeliveryInsertButton();
         }
+
+        //custom callback
+        if (
+          window.twinpxYadelivery &&
+          window.twinpxYadelivery.onPvzOfferSelect
+        ) {
+          window.twinpxYadelivery.onPvzOfferSelect(JSON.parse(jsonStr));
+        }
       }
     }
 
@@ -1772,6 +2048,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
               suppressMapOpenBlock: true,
             }
           );
+
+          //custom callback
+          if (
+            window.twinpxYadelivery &&
+            window.twinpxYadelivery.onPvzYmapLoad
+          ) {
+            window.twinpxYadelivery.onPvzYmapLoad(map);
+          }
 
           if (window.matchMedia('(min-width: 1077px)').matches) {
             let zoomControl = new ymaps.control.ZoomControl();
@@ -1951,6 +2235,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
                       ) {
                         onBoundsChange();
                       }
+
+                      //custom callback
+                      if (
+                        window.twinpxYadelivery &&
+                        window.twinpxYadelivery.onPvzLoad
+                      ) {
+                        window.twinpxYadelivery.onPvzLoad(result.POINTS);
+                      }
                     } else {
                       pointsError(BX.message('TWINPX_JS_EMPTY_OFFER'));
                     }
@@ -1974,6 +2266,11 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         //show sorted
         if (Object.values(pointsNodesArray).find((value) => value.sorted)) {
           ydPopupWrapper.classList.add('yd-popup-list-wrapper--sorted');
+        }
+
+        //custom callback
+        if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzBackClick) {
+          window.twinpxYadelivery.onPvzBackClick();
         }
       });
 
@@ -2090,14 +2387,17 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
       });
     });
 
-    //tel length < 13
+    //tel length < 11
     formElem.querySelectorAll('[type=tel]').forEach((telInput) => {
-      let digits = telInput.value.match(/\d+(\.\d+)?/g);
+      if (!telInput.instance) return;
+
+      let digits = telInput.instance.val;
+
       if (
         telInput.getAttribute('required') === '' ||
         telInput.value.trim() !== ''
       ) {
-        if (!digits || digits.join('').length >= 13) {
+        if (digits.length < 11 || digits.length > 11) {
           if (!focusElement) {
             focusElement = telInput;
           }
@@ -2127,3 +2427,6 @@ function twinpxYadeliverySerializeForm(form) {
 
   return result.substring(1);
 }
+
+//custom events and methods
+window.twinpxYadelivery = window.twinpxYadelivery || {};
