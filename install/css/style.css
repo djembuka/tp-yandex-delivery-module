@@ -357,7 +357,8 @@ body.no-scroll {
   min-height: 450px;
 }
 
-#ydPopup {
+#ydPopup,
+#ydPopup * {
   box-sizing: border-box;
 }
 
