@@ -261,6 +261,7 @@ window.twinpxYadeliveryInsertButton = function (block, btnObject, onloadFlag) {
     let emptySpan = document.createElement('span');
     emptySpan.id = `${btnObject.id}_SPAN`;
     block.appendChild(emptySpan);
+
     let counter = 0;
     //wait for the reload
     let intervalId = setInterval(() => {
@@ -293,10 +294,18 @@ window.twinpxYadeliveryInsertAndFill = function (btnObject) {
     //insert the button
     let div = document.createElement('div');
     div.innerHTML = btnObject.button;
-    document
+
+    //insert the button after description or in the end of the block
+    let block = document
       .getElementById(btnObject.id)
-      .closest('.bx-soa-pp-company')
-      .appendChild(div);
+      .closest('.bx-soa-pp-company');
+
+    let blockToAppend =
+      block.querySelector('.bx-soa-pp-company-description') ||
+      block.querySelector('.bx-soa-pp-company-desc') ||
+      block;
+
+    blockToAppend.appendChild(div);
   }
   //insert address if exists
   if (window.sessionStorage.getItem('twpxYadeliveryAddress')) {
