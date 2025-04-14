@@ -436,24 +436,49 @@ window.addEventListener('DOMContentLoaded', () => {
   //focusout for the Region and the Person blocks
   document
     .querySelector('form[name="ORDER_FORM"]')
+    .addEventListener('focusin', (e) => {
+      const target = e.target;
+      const isFormControl =
+        target.classList.contains('form-control') ||
+        (target.tagName.toLowerCase() === 'input' &&
+          target.closest('.form-control'));
+
+      // Не вызываем функцию для поля Адрес (textarea)
+      // if (isFormControl && target.tagName.toLowerCase() !== 'textarea') {
+      if (isFormControl) {
+        // Сохраняем начальное значение при получении фокуса
+        target.dataset.initialValue = target.value;
+      }
+    });
+
+  document
+    .querySelector('form[name="ORDER_FORM"]')
     .addEventListener('focusout', (e) => {
+      const target = e.target;
+      const isFormControl =
+        target.classList.contains('form-control') ||
+        (target.tagName.toLowerCase() === 'input' &&
+          target.closest('.form-control'));
+
       if (
-        e.target.classList.contains('form-control') ||
-        (e.target.tagName.toLowerCase() === 'input' &&
-          e.target.closest('.form-control'))
+        isFormControl &&
+        // target.tagName.toLowerCase() !== 'textarea' &&
+        window.twinpxYadeliveryRequired
       ) {
-        if (window.twinpxYadeliveryRequired) {
-          window.twinpxYadeliveryRequired.forEach((name) => {
-            if (
-              (e.target.closest('.bx-soa-location-input-container') &&
-                e.target
-                  .closest('.bx-soa-location-input-container')
-                  .querySelector(`[name="${name}"]`)) ||
-              e.target.getAttribute('name') === name
-            ) {
-              resetPrice();
-            }
-          });
+        const locationContainer = target.closest(
+          '.bx-soa-location-input-container'
+        );
+        const isRequiredField = window.twinpxYadeliveryRequired.some(
+          (name) =>
+            locationContainer?.querySelector(`[name="${name}"]`) ||
+            target.getAttribute('name') === name
+        );
+
+        // Проверяем, изменилось ли значение поля
+        const valueChanged = target.value !== target.dataset.initialValue;
+
+        if (isRequiredField && valueChanged) {
+          resetPrice();
         }
       }
     });
