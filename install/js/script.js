@@ -433,7 +433,17 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  //focusout for the Region and the Person blocks
+  // Функция для проверки режима pvz
+  function isPvzMode() {
+    const currentModeId = sessionStorage.getItem('twpxYadeliveryId');
+    if (!currentModeId) return false;
+
+    const currentMode = window.twinpxYadeliveryModes.find(
+      (mode) => mode.id === currentModeId
+    );
+    return currentMode ? currentMode.value.includes('pvz') : false;
+  }
+
   document
     .querySelector('form[name="ORDER_FORM"]')
     .addEventListener('focusin', (e) => {
@@ -443,8 +453,6 @@ window.addEventListener('DOMContentLoaded', () => {
         (target.tagName.toLowerCase() === 'input' &&
           target.closest('.form-control'));
 
-      // Не вызываем функцию для поля Адрес (textarea)
-      // if (isFormControl && target.tagName.toLowerCase() !== 'textarea') {
       if (isFormControl) {
         // Сохраняем начальное значение при получении фокуса
         target.dataset.initialValue = target.value;
@@ -460,11 +468,7 @@ window.addEventListener('DOMContentLoaded', () => {
         (target.tagName.toLowerCase() === 'input' &&
           target.closest('.form-control'));
 
-      if (
-        isFormControl &&
-        // target.tagName.toLowerCase() !== 'textarea' &&
-        window.twinpxYadeliveryRequired
-      ) {
+      if (isFormControl && window.twinpxYadeliveryRequired) {
         const locationContainer = target.closest(
           '.bx-soa-location-input-container'
         );
@@ -477,8 +481,14 @@ window.addEventListener('DOMContentLoaded', () => {
         // Проверяем, изменилось ли значение поля
         const valueChanged = target.value !== target.dataset.initialValue;
 
+        // Проверяем, является ли поле адресом
+        const isAddressField = target.tagName.toLowerCase() === 'textarea';
+
         if (isRequiredField && valueChanged) {
-          resetPrice();
+          // Для поля адреса вызываем resetPrice только если НЕ выбран режим pvz
+          if (!isAddressField || (isAddressField && !isPvzMode())) {
+            resetPrice();
+          }
         }
       }
     });
