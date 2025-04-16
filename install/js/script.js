@@ -439,9 +439,9 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!currentModeId) return false;
 
     const currentMode = window.twinpxYadeliveryModes.find(
-      (mode) => mode.id === currentModeId
+      (mode) => `ID_DELIVERY_ID_${mode.id}` === currentModeId
     );
-    return currentMode ? currentMode.value.includes('pvz') : false;
+    return currentMode ? currentMode.value.includes('pickup') : false;
   }
 
   document
