@@ -681,7 +681,12 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
       sendOffer(jsonStr);
 
-      if (window.BX) {
+      if (
+        window.BX &&
+        !!BX.Sale &&
+        !!BX.Sale.OrderAjaxComponent &&
+        !!BX.Sale.OrderAjaxComponent.sendRequest
+      ) {
         window.BX.Sale.OrderAjaxComponent.sendRequest();
       }
 
@@ -1476,7 +1481,14 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         document.querySelector(`[name="${result.FIELDS.PropAddress}"]`).value =
           address;
 
-        window.BX.Sale.OrderAjaxComponent.sendRequest();
+        if (
+          window.BX &&
+          !!BX.Sale &&
+          !!BX.Sale.OrderAjaxComponent &&
+          !!BX.Sale.OrderAjaxComponent.sendRequest
+        ) {
+          window.BX.Sale.OrderAjaxComponent.sendRequest();
+        }
 
         //insert button if needed
         window.twinpxYadeliveryInsertButton();
@@ -2029,7 +2041,15 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
             ).value;
           }
           pvzPopup.destroy();
-          BX.Sale.OrderAjaxComponent.sendRequest();
+
+          if (
+            window.BX &&
+            !!BX.Sale &&
+            !!BX.Sale.OrderAjaxComponent &&
+            !!BX.Sale.OrderAjaxComponent.sendRequest
+          ) {
+            BX.Sale.OrderAjaxComponent.sendRequest();
+          }
           pageScroll(true);
 
           window.twinpxYadeliverySession(
