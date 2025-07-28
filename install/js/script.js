@@ -280,6 +280,19 @@ window.twinpxYadeliveryInsertButton = function (block, btnObject, onloadFlag) {
 };
 
 window.twinpxYadeliveryInsertAndFill = function (btnObject) {
+  
+  //insert address if exists
+  if (window.sessionStorage.getItem('twpxYadeliveryAddress')) {
+    let address = JSON.parse(
+      window.sessionStorage.getItem('twpxYadeliveryAddress')
+    )[btnObject.id];
+
+    if (address) {
+      window.twinpxYadeliveryAddAddress(address);
+    }
+  }
+
+  // if the button is in the checkbox block
   if (
     document.getElementById(btnObject.id) &&
     document
@@ -289,13 +302,15 @@ window.twinpxYadeliveryInsertAndFill = function (btnObject) {
   ) {
     return;
   }
-  //check if the button already exists
+
+  // if the button is in the right block
+  // check if the button already exists
   if (window.twinpxYadeliveryInsertBtnFlag) {
     //insert the button
     let div = document.createElement('div');
     div.innerHTML = btnObject.button;
 
-    //insert the button after description or in the end of the block
+    // insert the button after description or in the end of the block
     let block = document
       .getElementById(btnObject.id)
       .closest('.bx-soa-pp-company');
@@ -306,16 +321,6 @@ window.twinpxYadeliveryInsertAndFill = function (btnObject) {
       block;
 
     blockToAppend.appendChild(div);
-  }
-  //insert address if exists
-  if (window.sessionStorage.getItem('twpxYadeliveryAddress')) {
-    let address = JSON.parse(
-      window.sessionStorage.getItem('twpxYadeliveryAddress')
-    )[btnObject.id];
-
-    if (address) {
-      window.twinpxYadeliveryAddAddress(address);
-    }
   }
 };
 
