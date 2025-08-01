@@ -144,6 +144,11 @@ body.no-scroll {
 .yd-popup-tabs__tabs__item.yd-popup-tabs__tabs__item--active {
   display: block;
 }
+.yd-popup-tabs__tabs__item[data-tab="package"] {
+  background-color: #fff;
+  padding: 16px;
+  margin-bottom: 30px;
+}
 /*_tabs_*/
 
 .yd-popup-form {
