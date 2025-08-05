@@ -1644,7 +1644,7 @@ function newDelivery(orderId) {
           { action: 'newDelivery', id: orderId },
           function (data) {
             node = document.getElementById(`newDeliveryContent`);
-            node.innerHTML = data;
+            node.innerHTML = createNewDeliveryHtml(data);
             elemLoader(node, false);
             window.ydConfirmer.adjustPosition();
             newDeliveryPopupOnload();
@@ -1713,6 +1713,286 @@ function newDeliveryPvz(orderId, pvzId, chosenAddress) {
     },
   });
   window.ydConfirmerPvz.show();
+}
+
+function createNewDeliveryHtml(data) {
+	let boxes = '';
+	
+	if (data.BOXES && data.BOXES.forEach) {
+		data.BOXES.forEach((box) => {
+			let boxControl = '';
+			let cxControl = '';
+			let cyControl = '';
+			let czControl = '';
+			let wgControl = '';
+			
+			if (box.controls && box.controls.forEach) {
+				box.controls.forEach((control) => {
+					if (control.property === 'select') {
+						let options = '';
+						
+						if (control.options && control.options.forEach) {
+							control.options.forEach((optionItem) => {
+								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}${optionItem.custom === true ? ' data-custom="true"' : ''}>${optionItem.label}</option>`;
+							});
+						}
+						boxControl = `
+							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+								<div class="twpx-ydw-order-label">Размер коробки</div>
+								<select name="PropBox[box][]" size="1" id="box" class="twpx-ydw-order-select">
+									${options}
+								</select>
+							</div>
+						`;
+					}
+					
+					if (control.property === 'text') {
+						if (control.name.includes('cx')) {
+							cxControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">Длина (см)</div>
+									<input type="text" name="PropBox[cx][]" data-name="length" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+						if (control.name.includes('cy')) {
+							cxControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">Ширина (см)</div>
+									<input type="text" name="PropBox[cy][]" data-name="width" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+						if (control.name.includes('cz')) {
+							cxControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">Высота (см)</div>
+									<input type="text" name="PropBox[cz][]" data-name="height" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+						if (control.name.includes('wg')) {
+							cxControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">Вес (г)</div>
+									<input type="text" name="PropBox[wg][]" data-name="weight" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+					}
+				});
+			}
+			
+			boxes += `
+				<div class="twpx-ydw-order-form-block-content">
+					<div class="twpx-ydw-order-btn-remove">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+							<rect width="24" height="24" rx="8" fill="#fb3f1d"></rect>
+							<g transform="translate(7.125 6)">
+								<path d="M18.828,10.1H16.765V9.726A1.125,1.125,0,0,0,15.64,8.6h-1.5a1.125,1.125,0,0,0-1.125,1.125V10.1H10.952a.937.937,0,0,0-.937.938v.75a.374.374,0,0,0,.375.375h9a.375.375,0,0,0,.375-.375v-.75A.938.938,0,0,0,18.828,10.1Zm-5.063-.375a.375.375,0,0,1,.375-.375h1.5a.375.375,0,0,1,.375.375V10.1h-2.25Z" transform="translate(-10.015 -8.601)" fill="#fff"></path>
+								<path d="M10.863,13.909a.117.117,0,0,0-.117.123l.31,6.493A1.124,1.124,0,0,0,12.179,21.6h5.695A1.124,1.124,0,0,0,19,20.524l.31-6.493a.117.117,0,0,0-.117-.123Zm5.664.937a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Z" transform="translate(-10.152 -9.596)" fill="#fff"></path>
+							</g>
+						</svg>
+					</div>
+					<div class="twpx-ydw-order-form-block-description"><b>${box.heading}</b></div>
+					<div class="twpx-ydw-order-form-group">
+						<div class="twpx-ydw-order-form-wrapper">
+							${boxControl}
+							<div class="twpx-ydw-order-form-control-custom">
+								<div class="twpx-ydw-order-form-control-dimensions">
+									${cxControl}
+									${cyControl}
+									${czControl}
+								</div>
+								${wgControl}
+							</div>
+						</div>
+					</div>
+				</div>`;
+		});
+	}
+	
+	
+	
+	return `
+<div id="newDeliveryContent" class="yd-popup-content">
+    <div class="yd-popup-error"></div>
+    <div class="yd-popup-body">
+        <div class="yd-popup-tabs">
+            <div class="yd-popup-tabs__nav">
+                <div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">Общие данные</div>
+                <div class="yd-popup-tabs__nav__item" data-tab="package">Упаковка</div>
+            </div>
+            <div class="yd-popup-tabs__tabs">
+                <form action="" novalidate="">
+                    <input type="hidden" id="PropInsurance" name="PropInsurance" value="N">
+                    <div class="yd-popup-tabs__tabs__item yd-popup-tabs__tabs__item--active" data-tab="general">
+                        <div class="yd-popup-form">
+                            <div class="yd-popup-form__col">
+                                <div class="b-float-label">
+                                    <input name="ORDER_ID" id="ydFormOrder" type="number" min="1" value="${data.FIELDS.ORDER_ID}" readonly="" required="">
+                                    <label for="ydFormOrder" class="active">ID заказа*</label>
+                                    <div class="yd-popup-form-fillbutton">ЗАПОЛНИТЬ ПОЛЯ ИЗ ЗАКАЗА</div>
+                                </div>
+                                <div class="b-float-label">
+                                    <input name="PropFio" id="ydFormFio" type="text" value="${data.FIELDS.PropFio}" required="">
+                                    <label for="ydFormFio" class="active">ФИО*</label>
+                                </div>
+                                <div class="b-float-label">
+                                    <input name="PropEmail" id="ydFormEmail" type="email" value="${data.FIELDS.PropEmail}">
+                                    <label for="ydFormEmail" class="active">E-mail</label>
+                                </div>
+                                <div class="b-float-label">
+                                    <input name="PropPhone" id="ydFormPhone" type="tel" value="${data.FIELDS.PropPhone}" required="">
+                                    <label for="ydFormPhone" class="active">Телефон*</label>
+                                </div>
+                                <div class="b-form-control b-float-label">
+                                    <select name="PAY_TYPE" id="ydFormPay" required="">
+                                        <option value="">Выберите вариант оплаты*</option>
+                                        <option value="already_paid">Заказ и доставка уже оплачены</option>
+                                        <option value="cash_on_receipt">Оплата заказа и доставки наличными при получении</option>
+                                        <option value="card_on_receipt">Оплата заказа и доставки картой при получении</option>
+                                    </select>
+                                </div>
+                                <div class="b-float-label">
+                                    <input name="PropPrice" id="ydFormPrice" type="number" min="0" value="${data.FIELDS.PropPrice}" required="">
+                                    <label for="ydFormPrice" class="active">Взять за доставку при получении*</label>
+                                </div>
+                            </div>
+                            <div class="yd-popup-form__col">
+                                <div class="b-float-label">
+                                    <input name="PropCity" id="ydFormCity" type="text" value="${data.FIELDS.PropCity}" required="">
+                                    <label for="ydFormCity" class="active">Город*</label>
+                                </div>
+                                <div class="b-float-label">
+                                    <textarea name="PropAddress" id="ydFormAddress" required="" rows="10" cols="10">${data.FIELDS.PropAddress}</textarea>
+                                    <label for="ydFormAddress" class="active">Адрес*</label>
+                                </div>
+                                <div class="b-float-label">
+                                    <textarea name="PropComment" id="ydFormComment">${data.FIELDS.PropComment || ''}</textarea>
+                                    <label for="ydFormComment">Комментарии для курьера</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="yd-popup-tabs__tabs__item" data-tab="package">
+                        <div id="twinpxYadeliveryBoxes" class="twpx-ydw-order-form-block" data-barcode="someBarcode">
+                            <div class="twpx-ydw-order-form-block-title">Упаковка</div>
+                            <div class="twpx-ydw-order-form-block-text">Выберите количество упаковки и ее размер.</div>
+							${boxes}
+                            <div class="twpx-ydw-order-add-button">Добавить коробку</div>
+                        </div>
+                        <div id="twinpxYadeliveryProducts" class="twpx-ydw-order-form-block">
+                            <div class="twpx-ydw-order-form-block-title">Товары</div>
+                            <div class="twpx-ydw-order-form-block-text">Распределите товары заказа по коробкам.</div>
+                            <div class="twpx-ydw-order-form-block-content">
+                                <div class="twpx-ydw-order-form-block-description"><b>Товар 1</b></div>
+                                <div class="twpx-ydw-order-form-group">
+                                    <div class="twpx-ydw-order-form-wrapper">
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+                                            <div class="twpx-ydw-order-label">Название товара</div>
+                                            <input type="text" name="product_id" value="Футболка Мужской Огонь" class="twpx-ydw-order-input" disabled="">
+                                        </div>
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
+                                            <div class="twpx-ydw-order-label">Коробка</div>
+                                            <select name="PRODUCT_BOX[]" class="twpx-ydw-order-select"></select>
+                                            <div class="twpx-ydw-order-form-note">Выберите коробку для данного товара.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="twpx-ydw-order-form-block-content">
+                                <div class="twpx-ydw-order-form-block-description"><b>Товар 2</b></div>
+                                <div class="twpx-ydw-order-form-group">
+                                    <div class="twpx-ydw-order-form-wrapper">
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+                                            <div class="twpx-ydw-order-label">Название товара</div>
+                                            <input type="text" name="product_id" value="Футболка Мужской Огонь" class="twpx-ydw-order-input" disabled="">
+                                        </div>
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
+                                            <div class="twpx-ydw-order-label">Коробка</div>
+                                            <select name="PRODUCT_BOX[]" class="twpx-ydw-order-select"></select>
+                                            <div class="twpx-ydw-order-form-note">Выберите коробку для данного товара.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="twpx-ydw-order-form-block-content">
+                                <div class="twpx-ydw-order-form-block-description"><b>Товар 3</b></div>
+                                <div class="twpx-ydw-order-form-group">
+                                    <div class="twpx-ydw-order-form-wrapper">
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+                                            <div class="twpx-ydw-order-label">Название товара</div>
+                                            <input type="text" name="product_id" value="Футболка Мужской Огонь" class="twpx-ydw-order-input" disabled="">
+                                        </div>
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
+                                            <div class="twpx-ydw-order-label">Коробка</div>
+                                            <select name="PRODUCT_BOX[]" class="twpx-ydw-order-select"></select>
+                                            <div class="twpx-ydw-order-form-note">Выберите коробку для данного товара.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="twpx-ydw-order-form-block-content">
+                                <div class="twpx-ydw-order-form-block-description"><b>Товар 4</b></div>
+                                <div class="twpx-ydw-order-form-group">
+                                    <div class="twpx-ydw-order-form-wrapper">
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+                                            <div class="twpx-ydw-order-label">Название товара</div>
+                                            <input type="text" name="product_id" value="Футболка Мужской Огонь" class="twpx-ydw-order-input" disabled="">
+                                        </div>
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
+                                            <div class="twpx-ydw-order-label">Коробка</div>
+                                            <select name="PRODUCT_BOX[]" class="twpx-ydw-order-select"></select>
+                                            <div class="twpx-ydw-order-form-note">Выберите коробку для данного товара.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="twpx-ydw-order-form-block-content">
+                                <div class="twpx-ydw-order-form-block-description"><b>Товар 5</b></div>
+                                <div class="twpx-ydw-order-form-group">
+                                    <div class="twpx-ydw-order-form-wrapper">
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+                                            <div class="twpx-ydw-order-label">Название товара</div>
+                                            <input type="text" name="product_id" value="Футболка Мужской Огонь" class="twpx-ydw-order-input" disabled="">
+                                        </div>
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
+                                            <div class="twpx-ydw-order-label">Коробка</div>
+                                            <select name="PRODUCT_BOX[]" class="twpx-ydw-order-select"></select>
+                                            <div class="twpx-ydw-order-form-note">Выберите коробку для данного товара.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="twpx-ydw-order-form-block-content">
+                                <div class="twpx-ydw-order-form-block-description"><b>Товар 6</b></div>
+                                <div class="twpx-ydw-order-form-group">
+                                    <div class="twpx-ydw-order-form-wrapper">
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+                                            <div class="twpx-ydw-order-label">Название товара</div>
+                                            <input type="text" name="product_id" value="Футболка Мужской Огонь" class="twpx-ydw-order-input" disabled="">
+                                        </div>
+                                        <div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
+                                            <div class="twpx-ydw-order-label">Коробка</div>
+                                            <select name="PRODUCT_BOX[]" class="twpx-ydw-order-select"></select>
+                                            <div class="twpx-ydw-order-form-note">Выберите коробку для данного товара.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="yd-popup-form__submit">
+                        <button class="twpx-ui-btn" type="submit">ЗАПРОСИТЬ ВАРИАНТЫ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="yd-popup-offers load-circle"></div>
+    </div>
+</div>
+	`;
 }
 
 function pageScroll(flag) {

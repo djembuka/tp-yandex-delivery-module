@@ -1,6 +1,6 @@
-body.no-scroll {
+/*body.no-scroll {
   overflow: hidden;
-}
+}*/
 :root {
   --yd-popup-height: 381px;
 }
