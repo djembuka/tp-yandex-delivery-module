@@ -1,218 +1,218 @@
 (() => {
-const boxesBlock = document.querySelector('#twinpxYadeliveryBoxes');
-const productsBlock = document.querySelector('#twinpxYadeliveryProducts');
+	const boxesBlock = document.querySelector('#twinpxYadeliveryBoxes');
+	const productsBlock = document.querySelector('#twinpxYadeliveryProducts');
 
-const storage = {
-    boxes: {
-        id: null,
-        value: {
-            checked: null,
-            customSize: {},
-        },
-    },
-    from: {
-        id: null,
-        value: {},
-    },
-};
+	const storage = {
+		boxes: {
+			id: null,
+			value: {
+				checked: null,
+				customSize: {},
+			},
+		},
+		from: {
+			id: null,
+			value: {},
+		},
+	};
 
-// set initial values for the storage
-(() => {
-    const blocks = boxesBlock.querySelectorAll('.twpx-ydw-order-form-block-content');
-    const lastBlock = blocks[blocks.length - 1];
+	// set initial values for the storage
+	(() => {
+		const blocks = boxesBlock.querySelectorAll('.twpx-ydw-order-form-block-content');
+		const lastBlock = blocks[blocks.length - 1];
 
-    // checked
-    storage.boxes.value.checked = lastBlock.querySelector('select').value;
+		// checked
+		storage.boxes.value.checked = lastBlock.querySelector('select').value;
 
-    // customSize
-    lastBlock.querySelector('.twpx-ydw-order-form-control-custom').querySelectorAll('input[type="text"]').forEach(control => {
-        storage.boxes.value.customSize[control.getAttribute('data-name')] = control.value;
-    });
-})();
+		// customSize
+		lastBlock.querySelector('.twpx-ydw-order-form-control-custom').querySelectorAll('input[type="text"]').forEach(control => {
+			storage.boxes.value.customSize[control.getAttribute('data-name')] = control.value;
+		});
+	})();
 
-function inputEvents(control, block) {
-    if (control.value && control.value.trim() !== '') {
-      block.classList.add('twpx-ydw-order-form-control--active');
-    }
+	function inputEvents(control, block) {
+		if (control.value && control.value.trim() !== '') {
+		  block.classList.add('twpx-ydw-order-form-control--active');
+		}
 
-    control.addEventListener('focus', () => {
-      block.classList.add('twpx-ydw-order-form-control--active');
-    });
+		control.addEventListener('focus', () => {
+		  block.classList.add('twpx-ydw-order-form-control--active');
+		});
 
-    control.addEventListener('blur', () => {
-      if (control.value.trim() !== '') {
-        block.classList.add('twpx-ydw-order-form-control--active');
-      } else {
-        block.classList.remove('twpx-ydw-order-form-control--active');
-      }
-      //check required
-      if (control.getAttribute('required')) {
-        if (control.value.trim() === '') {
-          block.classList.add('twpx-ydw-order-form-control--invalid');
-          isFormValid = false;
-        } else {
-          block.classList.remove('twpx-ydw-order-form-control--invalid');
-        }
-        validateForm();
-        disabledPeriodSelects();
-        setOrderButtonActive();
-      }
-    });
+		control.addEventListener('blur', () => {
+		  if (control.value.trim() !== '') {
+			block.classList.add('twpx-ydw-order-form-control--active');
+		  } else {
+			block.classList.remove('twpx-ydw-order-form-control--active');
+		  }
+		  //check required
+		  if (control.getAttribute('required')) {
+			if (control.value.trim() === '') {
+			  block.classList.add('twpx-ydw-order-form-control--invalid');
+			  isFormValid = false;
+			} else {
+			  block.classList.remove('twpx-ydw-order-form-control--invalid');
+			}
+			validateForm();
+			disabledPeriodSelects();
+			setOrderButtonActive();
+		  }
+		});
 
-    //this is not required, because we have document onclick
-    //just to be sure
-    control.addEventListener('keyup', () => {
-    //   hideError();
-    });
+		//this is not required, because we have document onclick
+		//just to be sure
+		control.addEventListener('keyup', () => {
+		//   hideError();
+		});
 
-    //boxes custom
-    if (
-      control.closest('.twpx-ydw-order-form-block') &&
-      control.closest('.twpx-ydw-order-form-block').id ===
-        'twinpxYadeliveryBoxes'
-    ) {
-      control.addEventListener('keyup', (e) => {
-        storage.boxes.value.customSize[control.getAttribute('data-name')] =
-          control.value;
-        // setBX24Storage(
-        //   storage.boxes.id,
-        //   JSON.stringify(storage.boxes.value)
-        // );
-      });
-    }
+		//boxes custom
+		if (
+		  control.closest('.twpx-ydw-order-form-block') &&
+		  control.closest('.twpx-ydw-order-form-block').id ===
+			'twinpxYadeliveryBoxes'
+		) {
+		  control.addEventListener('keyup', (e) => {
+			storage.boxes.value.customSize[control.getAttribute('data-name')] =
+			  control.value;
+			// setBX24Storage(
+			//   storage.boxes.id,
+			//   JSON.stringify(storage.boxes.value)
+			// );
+		  });
+		}
 
-    //list
-    const listButton = block.querySelector(
-      '.twpx-ydw-order-form-control--map .twpx-ydw-order-input'
-    );
+		//list
+		const listButton = block.querySelector(
+		  '.twpx-ydw-order-form-control--map .twpx-ydw-order-input'
+		);
 
-    if (listButton) {
-      listButton.addEventListener('click', (e) => {
-        e.preventDefault();
+		if (listButton) {
+		  listButton.addEventListener('click', (e) => {
+			e.preventDefault();
 
-        const input = listButton
-          .closest('.twpx-ydw-order-form-control')
-          .querySelector('.twpx-ydw-order-input');
+			const input = listButton
+			  .closest('.twpx-ydw-order-form-control')
+			  .querySelector('.twpx-ydw-order-input');
 
-        const hiddenInput = listButton
-          .closest('.twpx-ydw-order-form-control')
-          .querySelector('input[type="hidden"]');
+			const hiddenInput = listButton
+			  .closest('.twpx-ydw-order-form-control')
+			  .querySelector('input[type="hidden"]');
 
-        const json =
-          hiddenInput.value.trim() !== ''
-            ? JSON.parse(hiddenInput.value)
-            : {};
+			const json =
+			  hiddenInput.value.trim() !== ''
+				? JSON.parse(hiddenInput.value)
+				: {};
 
-        input.setAttribute('data-active', true);
+			input.setAttribute('data-active', true);
 
-        if (input.value.trim() !== '') {
-          //open map
-          document.dispatchEvent(
-            new CustomEvent('twpxYdwInitMap', {
-              detail: json,
-            })
-          );
-        } else {
-          //open location
-          document.dispatchEvent(new CustomEvent('twpxYdwInitLocation'));
-        }
-      });
-    }
+			if (input.value.trim() !== '') {
+			  //open map
+			  document.dispatchEvent(
+				new CustomEvent('twpxYdwInitMap', {
+				  detail: json,
+				})
+			  );
+			} else {
+			  //open location
+			  document.dispatchEvent(new CustomEvent('twpxYdwInitLocation'));
+			}
+		  });
+		}
 
-    //calc
-    const calcButton = block.querySelector('.twpx-ydw-order-btn-calc');
+		//calc
+		const calcButton = block.querySelector('.twpx-ydw-order-btn-calc');
 
-    if (calcButton) {
-      const paymentInput = orderBlock.querySelector('#twpxYdwPaymentInput');
+		if (calcButton) {
+		  const paymentInput = orderBlock.querySelector('#twpxYdwPaymentInput');
 
-      calcButton.addEventListener('click', async (e) => {
-        e.preventDefault();
+		  calcButton.addEventListener('click', async (e) => {
+			e.preventDefault();
 
-        calcButton.classList.add('twpx-ydw-order-btn--loading');
+			calcButton.classList.add('twpx-ydw-order-btn--loading');
 
-        let formData = new FormData(orderForm),
-          controller = new AbortController(),
-          response,
-          result;
+			let formData = new FormData(orderForm),
+			  controller = new AbortController(),
+			  response,
+			  result;
 
-        setTimeout(() => {
-          if (!response) {
-            controller.abort();
-            showError(
-              'Connection aborted.',
-              block.closest('.twpx-ydw-order-form-block')
-            );
-          }
-        }, 20000);
+			setTimeout(() => {
+			  if (!response) {
+				controller.abort();
+				showError(
+				  'Connection aborted.',
+				  block.closest('.twpx-ydw-order-form-block')
+				);
+			  }
+			}, 20000);
 
-        try {
-          response = await fetch(paymentInput.getAttribute('data-url'), {
-            method: 'POST',
-            body: formData,
-            signal: controller.signal,
-          });
+			try {
+			  response = await fetch(paymentInput.getAttribute('data-url'), {
+				method: 'POST',
+				body: formData,
+				signal: controller.signal,
+			  });
 
-          result = await response.json();
+			  result = await response.json();
 
-          calcButton.classList.remove('twpx-ydw-order-btn--loading');
+			  calcButton.classList.remove('twpx-ydw-order-btn--loading');
 
-          if (result && typeof result === 'object') {
-            if (result.status === 'success') {
-              if (String(result.data.num)) {
-                setInputValue(
-                  paymentInput.querySelector('input'),
-                  result.data.num
-                );
-                paymentInput
-                  .querySelector('input')
-                  .dispatchEvent(new Event('blur'));
-              }
-            } else if (result.errors) {
-              calcButton.classList.remove('twpx-ydw-order-btn--loading');
+			  if (result && typeof result === 'object') {
+				if (result.status === 'success') {
+				  if (String(result.data.num)) {
+					setInputValue(
+					  paymentInput.querySelector('input'),
+					  result.data.num
+					);
+					paymentInput
+					  .querySelector('input')
+					  .dispatchEvent(new Event('blur'));
+				  }
+				} else if (result.errors) {
+				  calcButton.classList.remove('twpx-ydw-order-btn--loading');
 
-              showError(
-                result.errors[0].message,
-                block.closest('.twpx-ydw-order-form-block')
-              );
-            }
-          }
-        } catch (err) {
-          calcButton.classList.remove('twpx-ydw-order-btn--loading');
+				  showError(
+					result.errors[0].message,
+					block.closest('.twpx-ydw-order-form-block')
+				  );
+				}
+			  }
+			} catch (err) {
+			  calcButton.classList.remove('twpx-ydw-order-btn--loading');
 
-          showError(err, block.closest('.twpx-ydw-order-form-block'));
-        }
-      });
-    }
+			  showError(err, block.closest('.twpx-ydw-order-form-block'));
+			}
+		  });
+		}
 
-    //close
-    const closeButton = block.querySelector('.twpx-ydw-order-form-close');
+		//close
+		const closeButton = block.querySelector('.twpx-ydw-order-form-close');
 
-    if (closeButton) {
-      closeButton.addEventListener('click', async (e) => {
-        e.preventDefault();
+		if (closeButton) {
+		  closeButton.addEventListener('click', async (e) => {
+			e.preventDefault();
 
-        setInputValue(control, '');
+			setInputValue(control, '');
 
-        const hidden =
-          control.parentNode.querySelector('input[type=hidden]');
-        hidden.value = '';
+			const hidden =
+			  control.parentNode.querySelector('input[type=hidden]');
+			hidden.value = '';
 
-        const textDiv = control.parentNode.querySelector(
-          '.twpx-ydw-order-form-control-text'
-        );
-        if (textDiv) {
-          textDiv.style.display = 'none';
-          textDiv.textContent = '';
-        }
+			const textDiv = control.parentNode.querySelector(
+			  '.twpx-ydw-order-form-control-text'
+			);
+			if (textDiv) {
+			  textDiv.style.display = 'none';
+			  textDiv.textContent = '';
+			}
 
-        validateForm();
-        disabledPeriodSelects();
-        setOrderButtonActive();
-      });
-    }
-}
+			validateForm();
+			disabledPeriodSelects();
+			setOrderButtonActive();
+		  });
+		}
+	}
 
-function setInputValue(input, value) {
+	function setInputValue(input, value) {
     const block = input.closest('.twpx-ydw-order-form-control');
     input.value !== undefined
       ? (input.value = value)
@@ -225,8 +225,7 @@ function setInputValue(input, value) {
     }
   }
 
-//boxes block
-(() => {
+	//boxes block
     let boxesIndex = 0;
     const boxesArray = []; //array to set boxes in order
     const boxTitle = boxesBlock
@@ -556,6 +555,5 @@ function setInputValue(input, value) {
           productsTwpxSelect.recreate({ options: arr, val: value });
         });
     }
-  })();
 
 })();
