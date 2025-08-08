@@ -211,6 +211,10 @@ window.newDeliveryPopupOnload = function () {
     e.preventDefault();
     const form = e.target;
     let focusElement;
+	
+	//change active tab (for the sake of height of the modal)
+	form.closest('.yd-popup-tabs').querySelector('.yd-popup-tabs__nav__item:first-child').click();
+	window.ydConfirmer.adjustPosition();
 
     //clear error
     ydError.innerHTML = '';
@@ -364,8 +368,11 @@ window.newDeliveryPopupOnload = function () {
       }
     }
 	
-	packageForm();
   });
+
+	if (ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]')) {
+		packageForm();
+	}
 };
 
 window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
@@ -487,6 +494,10 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
     e.preventDefault();
     const form = e.target;
     let focusElement;
+	
+	//change active tab (for the sake of height of the modal)
+	form.closest('.yd-popup-tabs').querySelector('.yd-popup-tabs__nav__item:first-child').click();
+	window.ydConfirmerPvz.adjustPosition();
 
     //clear error
     ydError.innerHTML = '';
@@ -1086,7 +1097,9 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
     return response.json();
   }
   
-  packageForm();
+  if (ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]')) {
+	packageForm();
+  }
 };
 
 window.twinpxYadeliveryPaysystemSelect = function (ydForm) {
@@ -1183,6 +1196,18 @@ window.twinpxYadeliveryFillbutton = function (ydForm) {
                 label ? label.classList.add('active') : undefined;
               }
             });
+			
+			if (result.BOXES && result.PRODUCTS) {
+				const packageTab = ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]');
+				const packageNavTab = ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__nav__item[data-tab="package"]');
+				
+				packageNavTab.classList.remove('yd-popup-tabs__nav__item--hidden');
+				
+				if (packageTab) {
+					packageTab.innerHTML = packageTabHtml(result);
+					packageForm();
+				}
+			}
           }
         } else {
           orderInput.focus();
@@ -1212,6 +1237,170 @@ window.twinpxYadeliveryPopupSettings = {
     opacity: '80',
   },
 };
+
+function packageTabHtml(data) {
+	
+	let boxes = '';
+	
+	if (data.BOXES && data.BOXES.forEach) {
+		data.BOXES.forEach((box) => {
+			let boxControl = '';
+			let cxControl = '';
+			let cyControl = '';
+			let czControl = '';
+			let wgControl = '';
+			
+			if (box.controls && box.controls.forEach) {
+				box.controls.forEach((control) => {
+					if (control.property === 'select') {
+						let options = '';
+						
+						if (control.options && control.options.forEach) {
+							control.options.forEach((optionItem) => {
+								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}${optionItem.custom === true ? ' data-custom="true"' : ''}>${optionItem.label}</option>`;
+							});
+						}
+						boxControl = `
+							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+								<div class="twpx-ydw-order-label">${control.label}</div>
+								<select name="${control.name}" size="1" id="box" class="twpx-ydw-order-select">
+									${options}
+								</select>
+							</div>
+						`;
+					}
+					else if (control.property === 'text') {
+						if (control.name.includes('cx')) {
+							cxControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">${control.label}</div>
+									<input type="text" name="${control.name}" data-name="length" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+						else if (control.name.includes('cy')) {
+							cyControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">${control.label}</div>
+									<input type="text" name="${control.name}" data-name="width" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+						else if (control.name.includes('cz')) {
+							czControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">${control.label}</div>
+									<input type="text" name="${control.name}" data-name="height" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+						else if (control.name.includes('wg')) {
+							wgControl = `
+								<div class="twpx-ydw-order-form-control">
+									<div class="twpx-ydw-order-label">${control.label}</div>
+									<input type="text" name="${control.name}" data-name="weight" value="${control.value}" class="twpx-ydw-order-input">
+								</div>
+							`;
+						}
+					}
+				});
+			}
+			
+			boxes += `
+				<div class="twpx-ydw-order-form-block-content">
+					<div class="twpx-ydw-order-btn-remove">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+							<rect width="24" height="24" rx="8" fill="#fb3f1d"></rect>
+							<g transform="translate(7.125 6)">
+								<path d="M18.828,10.1H16.765V9.726A1.125,1.125,0,0,0,15.64,8.6h-1.5a1.125,1.125,0,0,0-1.125,1.125V10.1H10.952a.937.937,0,0,0-.937.938v.75a.374.374,0,0,0,.375.375h9a.375.375,0,0,0,.375-.375v-.75A.938.938,0,0,0,18.828,10.1Zm-5.063-.375a.375.375,0,0,1,.375-.375h1.5a.375.375,0,0,1,.375.375V10.1h-2.25Z" transform="translate(-10.015 -8.601)" fill="#fff"></path>
+								<path d="M10.863,13.909a.117.117,0,0,0-.117.123l.31,6.493A1.124,1.124,0,0,0,12.179,21.6h5.695A1.124,1.124,0,0,0,19,20.524l.31-6.493a.117.117,0,0,0-.117-.123Zm5.664.937a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Z" transform="translate(-10.152 -9.596)" fill="#fff"></path>
+							</g>
+						</svg>
+					</div>
+					<div class="twpx-ydw-order-form-block-description"><b>${box.heading}</b></div>
+					<div class="twpx-ydw-order-form-group">
+						<div class="twpx-ydw-order-form-wrapper">
+							${boxControl}
+							<div class="twpx-ydw-order-form-control-custom">
+								<div class="twpx-ydw-order-form-control-dimensions">
+									${cxControl}
+									${cyControl}
+									${czControl}
+								</div>
+								${wgControl}
+							</div>
+						</div>
+					</div>
+				</div>`;
+		});
+	}
+	
+	let products = '';
+	
+	if (data.PRODUCTS && data.PRODUCTS.forEach) {
+		data.PRODUCTS.forEach((product) => {
+			
+			let productControl = '';
+			let boxControl = '';
+			
+			if (product.controls && product.controls.forEach) {
+				product.controls.forEach((control) => {
+					
+					if (control.property === 'text') {
+						productControl = `
+							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
+								<div class="twpx-ydw-order-label">${control.label}</div>
+								<input type="text" name="${control.name}" value="${control.value}" class="twpx-ydw-order-input" disabled="">
+							</div>
+						`;
+					} else if (control.property === 'select') {
+						let options = '';
+						
+						if (control.options && control.options.forEach) {
+							control.options.forEach((optionItem) => {
+								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}>${optionItem.label}</option>`;
+							});
+						}
+						
+						boxControl = `
+							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
+								<div class="twpx-ydw-order-label">${control.label}</div>
+								<select name="${control.name}" class="twpx-ydw-order-select">${options}</select>
+								<div class="twpx-ydw-order-form-note">${control.hint_external}</div>
+							</div>
+						`;
+					}
+				});
+			}
+			
+			products += `
+				<div class="twpx-ydw-order-form-block-content">
+					<div class="twpx-ydw-order-form-block-description"><b>${product.heading}</b></div>
+					<div class="twpx-ydw-order-form-group">
+						<div class="twpx-ydw-order-form-wrapper">
+							${productControl}
+							${boxControl}
+						</div>
+					</div>
+				</div>
+			`;
+		});
+	}
+	
+    return `
+		<div id="twinpxYadeliveryBoxes" class="twpx-ydw-order-form-block" data-barcode="someBarcode">
+			<div class="twpx-ydw-order-form-block-title">${BX.message('TWINPX_MODAL_PACKAGE')}</div>
+			<div class="twpx-ydw-order-form-block-text">${BX.message('Box_desc')}</div>
+			${boxes}
+			<div class="twpx-ydw-order-add-button">${BX.message('Add_box')}</div>
+		</div>
+		<div id="twinpxYadeliveryProducts" class="twpx-ydw-order-form-block">
+			<div class="twpx-ydw-order-form-block-title">${BX.message('Product_header')}</div>
+			<div class="twpx-ydw-order-form-block-text">${BX.message('Product_desc')}</div>
+			${products}
+		</div>
+	`;
+}
 
 function packageForm() {
 	const boxesBlock = document.querySelector('#twinpxYadeliveryBoxes');
@@ -1268,7 +1457,7 @@ function packageForm() {
 			} else {
 			  block.classList.remove('twpx-ydw-order-form-control--invalid');
 			}
-			validateForm();
+			// validateForm();
 			disabledPeriodSelects();
 			setOrderButtonActive();
 		  }
@@ -1420,7 +1609,7 @@ function packageForm() {
 			  textDiv.textContent = '';
 			}
 
-			validateForm();
+			// validateForm();
 			disabledPeriodSelects();
 			setOrderButtonActive();
 		  });
@@ -1580,7 +1769,7 @@ function packageForm() {
         createProductsSelect(indexToRemove, currentIndex);
         showDeleteButtons(boxesBlock);
 
-        validateForm();
+        // validateForm();
         disabledPeriodSelects();
         setOrderButtonActive();
       }
@@ -2279,231 +2468,83 @@ function newDeliveryPvz(orderId, pvzId, chosenAddress) {
 }
 
 function createNewDeliveryHtml(data) {
-	let boxes = '';
+	let fieldsHidden = '';
 	
-	if (data.BOXES && data.BOXES.forEach) {
-		data.BOXES.forEach((box) => {
-			let boxControl = '';
-			let cxControl = '';
-			let cyControl = '';
-			let czControl = '';
-			let wgControl = '';
-			
-			if (box.controls && box.controls.forEach) {
-				box.controls.forEach((control) => {
-					if (control.property === 'select') {
-						let options = '';
-						
-						if (control.options && control.options.forEach) {
-							control.options.forEach((optionItem) => {
-								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}${optionItem.custom === true ? ' data-custom="true"' : ''}>${optionItem.label}</option>`;
-							});
-						}
-						boxControl = `
-							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
-								<div class="twpx-ydw-order-label">Размер коробки</div>
-								<select name="PropBox[box][]" size="1" id="box" class="twpx-ydw-order-select">
-									${options}
-								</select>
-							</div>
-						`;
-					}
-					
-					if (control.property === 'text') {
-						if (control.name.includes('cx')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Длина (см)</div>
-									<input type="text" name="PropBox[cx][]" data-name="length" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-						if (control.name.includes('cy')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Ширина (см)</div>
-									<input type="text" name="PropBox[cy][]" data-name="width" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-						if (control.name.includes('cz')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Высота (см)</div>
-									<input type="text" name="PropBox[cz][]" data-name="height" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-						if (control.name.includes('wg')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Вес (г)</div>
-									<input type="text" name="PropBox[wg][]" data-name="weight" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-					}
-				});
-			}
-			
-			boxes += `
-				<div class="twpx-ydw-order-form-block-content">
-					<div class="twpx-ydw-order-btn-remove">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-							<rect width="24" height="24" rx="8" fill="#fb3f1d"></rect>
-							<g transform="translate(7.125 6)">
-								<path d="M18.828,10.1H16.765V9.726A1.125,1.125,0,0,0,15.64,8.6h-1.5a1.125,1.125,0,0,0-1.125,1.125V10.1H10.952a.937.937,0,0,0-.937.938v.75a.374.374,0,0,0,.375.375h9a.375.375,0,0,0,.375-.375v-.75A.938.938,0,0,0,18.828,10.1Zm-5.063-.375a.375.375,0,0,1,.375-.375h1.5a.375.375,0,0,1,.375.375V10.1h-2.25Z" transform="translate(-10.015 -8.601)" fill="#fff"></path>
-								<path d="M10.863,13.909a.117.117,0,0,0-.117.123l.31,6.493A1.124,1.124,0,0,0,12.179,21.6h5.695A1.124,1.124,0,0,0,19,20.524l.31-6.493a.117.117,0,0,0-.117-.123Zm5.664.937a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Z" transform="translate(-10.152 -9.596)" fill="#fff"></path>
-							</g>
-						</svg>
-					</div>
-					<div class="twpx-ydw-order-form-block-description"><b>${box.heading}</b></div>
-					<div class="twpx-ydw-order-form-group">
-						<div class="twpx-ydw-order-form-wrapper">
-							${boxControl}
-							<div class="twpx-ydw-order-form-control-custom">
-								<div class="twpx-ydw-order-form-control-dimensions">
-									${cxControl}
-									${cyControl}
-									${czControl}
-								</div>
-								${wgControl}
-							</div>
-						</div>
-					</div>
-				</div>`;
+	if (data.FIELDS_HIDDEN && typeof data.FIELDS_HIDDEN === 'object') {
+		Object.entries(data.FIELDS_HIDDEN).forEach((entry) => {
+			fieldsHidden += `<input type="hidden" id="${entry[0]}" name="${entry[0]}" value="${entry[1]}">`;
+		});
+	}
+	let paymentOptions = '';
+	
+	if (data.PAYMENT_TYPE && typeof data.PAYMENT_TYPE === 'object') {
+		Object.entries(data.PAYMENT_TYPE).forEach((entry) => {
+			paymentOptions += `<option value="${entry[0]}"${data.FIELDS && data.FIELDS.PAY_TYPE && data.FIELDS.PAY_TYPE===entry[0] ? 'selected="selected"' : ''}>${entry[1]}</option>`;
 		});
 	}
 	
-	let products = '';
-	
-	if (data.PRODUCTS && data.PRODUCTS.forEach) {
-		data.PRODUCTS.forEach((product) => {
-			
-			let productControl = '';
-			let boxControl = '';
-			
-			if (product.controls && product.controls.forEach) {
-				product.controls.forEach((control) => {
-					
-					if (control.property === 'text') {
-						productControl = `
-							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
-								<div class="twpx-ydw-order-label">${control.label}</div>
-								<input type="text" name="${control.name}" value="${product.value}" class="twpx-ydw-order-input" disabled="">
-							</div>
-						`;
-					}
-					
-					if (control.property === 'select') {
-						let options = '';
-						
-						if (control.options && control.options.forEach) {
-							control.options.forEach((optionItem) => {
-								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}>${optionItem.label}</option>`;
-							});
-						}
-						
-						boxControl = `
-							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
-								<div class="twpx-ydw-order-label">${control.label}</div>
-								<select name="${control.name}" class="twpx-ydw-order-select">${options}</select>
-								<div class="twpx-ydw-order-form-note">${control.hint_external}</div>
-							</div>
-						`;
-					}
-			
-					products += `
-						<div class="twpx-ydw-order-form-block-content">
-							<div class="twpx-ydw-order-form-block-description"><b>${product.heading}</b></div>
-							<div class="twpx-ydw-order-form-group">
-								<div class="twpx-ydw-order-form-wrapper">
-									${productControl}
-									${boxControl}
-								</div>
-							</div>
-						</div>
-					`;
-				});
-			}
-		});
-	}
+	const packageTab = packageTabHtml(data);
 	
 	return `
     <div class="yd-popup-error"></div>
     <div class="yd-popup-body">
         <div class="yd-popup-tabs">
             <div class="yd-popup-tabs__nav">
-                <div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">Общие данные</div>
-                <div class="yd-popup-tabs__nav__item" data-tab="package">Упаковка</div>
+                <div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">${BX.message('TWINPX_MODAL_GENERAL')}</div>
+				<div class="yd-popup-tabs__nav__item${(!data.BOXES || !data.BOXES.length || !data.PRODUCTS || !data.PRODUCTS.length) ? ' yd-popup-tabs__nav__item--hidden' : ''}" data-tab="package">${BX.message('TWINPX_MODAL_PACKAGE')}</div>
             </div>
             <div class="yd-popup-tabs__tabs">
                 <form action="" novalidate="">
-                    <input type="hidden" id="PropInsurance" name="PropInsurance" value="N">
+                    ${fieldsHidden}
                     <div class="yd-popup-tabs__tabs__item yd-popup-tabs__tabs__item--active" data-tab="general">
                         <div class="yd-popup-form">
                             <div class="yd-popup-form__col">
                                 <div class="b-float-label">
-                                    <input name="ORDER_ID" id="ydFormOrder" type="number" min="1" value="${data.FIELDS.ORDER_ID}" readonly="" required="">
-                                    <label for="ydFormOrder" class="active">ID заказа*</label>
-                                    <div class="yd-popup-form-fillbutton">ЗАПОЛНИТЬ ПОЛЯ ИЗ ЗАКАЗА</div>
+                                    <input name="ORDER_ID" id="ydFormOrder" type="number" min="1" value="${data.FIELDS.ORDER_ID}"${data.FIELDS.ORDER_ID ? ' readonly=""' : ''} required="">
+                                    <label for="ydFormOrder"${data.FIELDS.ORDER_ID ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_ORDER')}*</label>
+                                    <div class="yd-popup-form-fillbutton">${BX.message('TWINPX_YADELIVERY_GETDATA')}</div>
                                 </div>
                                 <div class="b-float-label">
                                     <input name="PropFio" id="ydFormFio" type="text" value="${data.FIELDS.PropFio}" required="">
-                                    <label for="ydFormFio" class="active">ФИО*</label>
+                                    <label for="ydFormFio"${data.FIELDS.PropFio ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_FIO')}*</label>
                                 </div>
                                 <div class="b-float-label">
                                     <input name="PropEmail" id="ydFormEmail" type="email" value="${data.FIELDS.PropEmail}">
-                                    <label for="ydFormEmail" class="active">E-mail</label>
+                                    <label for="ydFormEmail"${data.FIELDS.PropEmail ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_EMAIL')}</label>
                                 </div>
                                 <div class="b-float-label">
                                     <input name="PropPhone" id="ydFormPhone" type="tel" value="${data.FIELDS.PropPhone}" required="">
-                                    <label for="ydFormPhone" class="active">Телефон*</label>
+                                    <label for="ydFormPhone"${data.FIELDS.PropPhone ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_PHONE')}*</label>
                                 </div>
                                 <div class="b-form-control b-float-label">
                                     <select name="PAY_TYPE" id="ydFormPay" required="">
-                                        <option value="">Выберите вариант оплаты*</option>
-                                        <option value="already_paid">Заказ и доставка уже оплачены</option>
-                                        <option value="cash_on_receipt">Оплата заказа и доставки наличными при получении</option>
-                                        <option value="card_on_receipt">Оплата заказа и доставки картой при получении</option>
+                                        ${paymentOptions}
                                     </select>
                                 </div>
                                 <div class="b-float-label">
                                     <input name="PropPrice" id="ydFormPrice" type="number" min="0" value="${data.FIELDS.PropPrice}" required="">
-                                    <label for="ydFormPrice" class="active">Взять за доставку при получении*</label>
+                                    <label for="ydFormPrice"${data.FIELDS.PropPrice ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_COST')}</label>
                                 </div>
                             </div>
                             <div class="yd-popup-form__col">
                                 <div class="b-float-label">
                                     <input name="PropCity" id="ydFormCity" type="text" value="${data.FIELDS.PropCity}" required="">
-                                    <label for="ydFormCity" class="active">Город*</label>
+                                    <label for="ydFormCity"${data.FIELDS.PropCity ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_CITY')}*</label>
                                 </div>
                                 <div class="b-float-label">
                                     <textarea name="PropAddress" id="ydFormAddress" required="" rows="10" cols="10">${data.FIELDS.PropAddress}</textarea>
-                                    <label for="ydFormAddress" class="active">Адрес*</label>
+                                    <label for="ydFormAddress"${data.FIELDS.PropAddress ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_ADDRESS')}*</label>
                                 </div>
                                 <div class="b-float-label">
                                     <textarea name="PropComment" id="ydFormComment">${data.FIELDS.PropComment || ''}</textarea>
-                                    <label for="ydFormComment">Комментарии для курьера</label>
+                                    <label for="ydFormComment"${data.FIELDS.PropComment ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_COMMENT')}</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="yd-popup-tabs__tabs__item" data-tab="package">
-                        <div id="twinpxYadeliveryBoxes" class="twpx-ydw-order-form-block" data-barcode="someBarcode">
-                            <div class="twpx-ydw-order-form-block-title">Упаковка</div>
-                            <div class="twpx-ydw-order-form-block-text">Выберите количество упаковки и ее размер.</div>
-							${boxes}
-                            <div class="twpx-ydw-order-add-button">Добавить коробку</div>
-                        </div>
-                        <div id="twinpxYadeliveryProducts" class="twpx-ydw-order-form-block">
-                            <div class="twpx-ydw-order-form-block-title">Товары</div>
-                            <div class="twpx-ydw-order-form-block-text">Распределите товары заказа по коробкам.</div>
-							${products}
-                        </div>
-                    </div>
+					<div class="yd-popup-tabs__tabs__item" data-tab="package">${packageTab}</div>
                     <div class="yd-popup-form__submit">
-                        <button class="twpx-ui-btn" type="submit">ЗАПРОСИТЬ ВАРИАНТЫ</button>
+                        <button class="twpx-ui-btn" type="submit">${BX.message('TWINPX_YADELIVERY_SUBMIT')}</button>
                     </div>
                 </form>
             </div>
@@ -2513,227 +2554,77 @@ function createNewDeliveryHtml(data) {
 	`;
 }
 
-
 function createNewDeliveryPvzHtml(data) {
-	let hiddenFields = '<input type="hidden" id="PropInsurance" name="PropInsurance" value="N">';
+	let fieldsHidden = '';
 	
-	let boxes = '';
+	if (data.FIELDS_HIDDEN && typeof data.FIELDS_HIDDEN === 'object') {
+		Object.entries(data.FIELDS_HIDDEN).forEach((entry) => {
+			fieldsHidden += `<input type="hidden" id="${entry[0]}" name="${entry[0]}" value="${entry[1]}">`;
+		});
+	}
+		
+	let paymentOptions = '';
 	
-	if (data.BOXES && data.BOXES.forEach) {
-		data.BOXES.forEach((box) => {
-			let boxControl = '';
-			let cxControl = '';
-			let cyControl = '';
-			let czControl = '';
-			let wgControl = '';
-			
-			if (box.controls && box.controls.forEach) {
-				box.controls.forEach((control) => {
-					if (control.property === 'select') {
-						let options = '';
-						
-						if (control.options && control.options.forEach) {
-							control.options.forEach((optionItem) => {
-								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}${optionItem.custom === true ? ' data-custom="true"' : ''}>${optionItem.label}</option>`;
-							});
-						}
-						boxControl = `
-							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
-								<div class="twpx-ydw-order-label">Размер коробки</div>
-								<select name="PropBox[box][]" size="1" id="box" class="twpx-ydw-order-select">
-									${options}
-								</select>
-							</div>
-						`;
-					}
-					
-					if (control.property === 'text') {
-						if (control.name.includes('cx')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Длина (см)</div>
-									<input type="text" name="PropBox[cx][]" data-name="length" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-						if (control.name.includes('cy')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Ширина (см)</div>
-									<input type="text" name="PropBox[cy][]" data-name="width" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-						if (control.name.includes('cz')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Высота (см)</div>
-									<input type="text" name="PropBox[cz][]" data-name="height" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-						if (control.name.includes('wg')) {
-							cxControl = `
-								<div class="twpx-ydw-order-form-control">
-									<div class="twpx-ydw-order-label">Вес (г)</div>
-									<input type="text" name="PropBox[wg][]" data-name="weight" value="${control.value}" class="twpx-ydw-order-input">
-								</div>
-							`;
-						}
-					}
-				});
-			}
-			
-			boxes += `
-				<div class="twpx-ydw-order-form-block-content">
-					<div class="twpx-ydw-order-btn-remove">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-							<rect width="24" height="24" rx="8" fill="#fb3f1d"></rect>
-							<g transform="translate(7.125 6)">
-								<path d="M18.828,10.1H16.765V9.726A1.125,1.125,0,0,0,15.64,8.6h-1.5a1.125,1.125,0,0,0-1.125,1.125V10.1H10.952a.937.937,0,0,0-.937.938v.75a.374.374,0,0,0,.375.375h9a.375.375,0,0,0,.375-.375v-.75A.938.938,0,0,0,18.828,10.1Zm-5.063-.375a.375.375,0,0,1,.375-.375h1.5a.375.375,0,0,1,.375.375V10.1h-2.25Z" transform="translate(-10.015 -8.601)" fill="#fff"></path>
-								<path d="M10.863,13.909a.117.117,0,0,0-.117.123l.31,6.493A1.124,1.124,0,0,0,12.179,21.6h5.695A1.124,1.124,0,0,0,19,20.524l.31-6.493a.117.117,0,0,0-.117-.123Zm5.664.937a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Zm-1.875,0a.375.375,0,0,1,.75,0v4.875a.375.375,0,1,1-.75,0Z" transform="translate(-10.152 -9.596)" fill="#fff"></path>
-							</g>
-						</svg>
-					</div>
-					<div class="twpx-ydw-order-form-block-description"><b>${box.heading}</b></div>
-					<div class="twpx-ydw-order-form-group">
-						<div class="twpx-ydw-order-form-wrapper">
-							${boxControl}
-							<div class="twpx-ydw-order-form-control-custom">
-								<div class="twpx-ydw-order-form-control-dimensions">
-									${cxControl}
-									${cyControl}
-									${czControl}
-								</div>
-								${wgControl}
-							</div>
-						</div>
-					</div>
-				</div>`;
+	if (data.PAYMENT_TYPE && typeof data.PAYMENT_TYPE === 'object') {
+		Object.entries(data.PAYMENT_TYPE).forEach((entry) => {
+			paymentOptions += `<option value="${entry[0]}"${data.FIELDS && data.FIELDS.PAY_TYPE && data.FIELDS.PAY_TYPE===entry[0] ? 'selected="selected"' : ''}>${entry[1]}</option>`;
 		});
 	}
 	
-	let products = '';
-	
-	if (data.PRODUCTS && data.PRODUCTS.forEach) {
-		data.PRODUCTS.forEach((product) => {
-			
-			let productControl = '';
-			let boxControl = '';
-			
-			if (product.controls && product.controls.forEach) {
-				product.controls.forEach((control) => {
-					
-					if (control.property === 'text') {
-						productControl = `
-							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
-								<div class="twpx-ydw-order-label">${control.label}</div>
-								<input type="text" name="${control.name}" value="${product.value}" class="twpx-ydw-order-input" disabled="">
-							</div>
-						`;
-					}
-					
-					if (control.property === 'select') {
-						let options = '';
-						
-						if (control.options && control.options.forEach) {
-							control.options.forEach((optionItem) => {
-								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}>${optionItem.label}</option>`;
-							});
-						}
-						
-						boxControl = `
-							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
-								<div class="twpx-ydw-order-label">${control.label}</div>
-								<select name="${control.name}" class="twpx-ydw-order-select">${options}</select>
-								<div class="twpx-ydw-order-form-note">${control.hint_external}</div>
-							</div>
-						`;
-					}
-			
-					products += `
-						<div class="twpx-ydw-order-form-block-content">
-							<div class="twpx-ydw-order-form-block-description"><b>${product.heading}</b></div>
-							<div class="twpx-ydw-order-form-group">
-								<div class="twpx-ydw-order-form-wrapper">
-									${productControl}
-									${boxControl}
-								</div>
-							</div>
-						</div>
-					`;
-				});
-			}
-		});
-	}
+	const packageTab = packageTabHtml(data);
 	
 	return `
 	<div class="yd-popup-error"></div>
 	<div class="yd-popup-body">
 		<div class="yd-popup-tabs">
 			<div class="yd-popup-tabs__nav">
-				<div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">Общие данные</div>
-                <div class="yd-popup-tabs__nav__item" data-tab="package">Упаковка</div>
+				<div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">${BX.message('TWINPX_MODAL_GENERAL')}</div>
+                <div class="yd-popup-tabs__nav__item${(!data.BOXES || !data.BOXES.length || !data.PRODUCTS || !data.PRODUCTS.length) ? ' yd-popup-tabs__nav__item--hidden' : ''}" data-tab="package">${BX.message('TWINPX_MODAL_PACKAGE')}</div>
 			</div>
 			<div class="yd-popup-tabs__tabs">
 				<form action="" novalidate="">
-					${hiddenFields}
+					${fieldsHidden}
 					<div class="yd-popup-tabs__tabs__item yd-popup-tabs__tabs__item--active" data-tab="general">
 						<div class="yd-popup-form">
 							<div class="yd-popup-form__col">
 								<div class="b-float-label">
-									<input name="ORDER_ID" id="ydFormPvzOrder" type="number" value="${data.FIELDS.ORDER_ID}" readonly="" required="">
-									<label for="ydFormPvzOrder" class="active">ID заказа*</label>
-									<div class="yd-popup-form-fillbutton">ЗАПОЛНИТЬ ПОЛЯ ИЗ ЗАКАЗА</div>
+									<input name="ORDER_ID" id="ydFormPvzOrder" type="number" value="${data.FIELDS.ORDER_ID}"${data.FIELDS.ORDER_ID ? ' readonly=""' : ''} required="">
+									<label for="ydFormPvzOrder"${data.FIELDS.ORDER_ID ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_ORDER')}*</label>
+									<div class="yd-popup-form-fillbutton">${BX.message('TWINPX_YADELIVERY_GETDATA')}</div>
 								</div>
 								<div class="b-float-label">
 									<input name="PropFio" id="ydFormPvzFio" type="text" value="${data.FIELDS.PropFio}" required="">
-									<label for="ydFormPvzFio" class="active">ФИО*</label>
+									<label for="ydFormPvzFio"${data.FIELDS.PropFio ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_FIO')}*</label>
 								</div>
 								<div class="b-float-label">
 									<input name="PropEmail" id="ydFormPvzEmail" type="email" value="${data.FIELDS.PropEmail}">
-									<label for="ydFormPvzEmail" class="active">E-mail</label>
+									<label for="ydFormPvzEmail"${data.FIELDS.PropEmail ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_EMAIL')}</label>
 								</div>
 								<div class="b-float-label">
 									<input name="PropPhone" id="ydFormPvzPhone" type="tel" value="${data.FIELDS.PropPhone}" required="">
-									<label for="ydFormPvzPhone" class="active">Телефон*</label>
+									<label for="ydFormPvzPhone"${data.FIELDS.PropPhone ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_PHONE')}*</label>
 								</div>
 								<div class="b-form-control b-float-label">
 									<select name="PAY_TYPE" id="ydFormPay" required="">
-										<option value="">Выберите вариант оплаты*</option>
-										<option value="already_paid" selected="">Заказ и доставка уже оплачены</option>
-										<option value="cash_on_receipt">Оплата заказа и доставки наличными при получении</option>
-										<option value="card_on_receipt">Оплата заказа и доставки картой при получении</option>
+										${paymentOptions}
 									</select>
 								</div>
 								<div class="b-float-label">
 									<input name="PropPrice" id="ydFormPrice" type="number" min="0" value="${data.FIELDS.PropPrice}" required="">
-									<label for="ydFormPrice" class="active">Взять за доставку при получении*</label>
+									<label for="ydFormPrice"${data.FIELDS.PropPrice ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_COST')}</label>
 								</div>
 							</div>
 							<div class="yd-popup-form__col">
 								<div class="b-float-label">
 									<input name="PropCity" id="ydFormPvzCity" type="text" value="${data.FIELDS.PropCity}" required="">
-									<label for="ydFormPvzCity" class="active">Город*</label>
+									<label for="ydFormPvzCity"${data.FIELDS.PropCity ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_CITY')}*</label>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="yd-popup-tabs__tabs__item" data-tab="package">
-                        <div id="twinpxYadeliveryBoxes" class="twpx-ydw-order-form-block" data-barcode="someBarcode">
-                            <div class="twpx-ydw-order-form-block-title">Упаковка</div>
-                            <div class="twpx-ydw-order-form-block-text">Выберите количество упаковки и ее размер.</div>
-							${boxes}
-                            <div class="twpx-ydw-order-add-button">Добавить коробку</div>
-                        </div>
-                        <div id="twinpxYadeliveryProducts" class="twpx-ydw-order-form-block">
-                            <div class="twpx-ydw-order-form-block-title">Товары</div>
-                            <div class="twpx-ydw-order-form-block-text">Распределите товары заказа по коробкам.</div>
-							${products}
-                        </div>
-                    </div>
+					<div class="yd-popup-tabs__tabs__item" data-tab="package">${packageTab}</div>
 					<div class="yd-popup-form__submit">
-						<button class="twpx-ui-btn" type="submit">ЗАПРОСИТЬ ВАРИАНТЫ</button>
+						<button class="twpx-ui-btn" type="submit">${BX.message('TWINPX_YADELIVERY_SUBMIT')}</button>
 					</div>
 				</form>
 				<div class="yd-popup-map-container"></div>
