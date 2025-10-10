@@ -165,11 +165,11 @@ class InputTelMaskGetSetValue {
   //to prevent popup moving down
   BX.ready(() => {
     BX.addCustomEvent('onAjaxSuccess', (response) => {
-      setTimeout(() => {
-		if (BX.PopupWindowManager.getCurrentPopup()) {
+      if (BX.PopupWindowManager.getCurrentPopup()) {
+        setTimeout(() => {
           BX.PopupWindowManager.getCurrentPopup().adjustPosition();
-		}
-      }, 100);
+        }, 100);
+      }
     });
   });
 })();
@@ -204,27 +204,22 @@ window.twinpxYadeliveryPopupProps = {
 window.twinpxYadeliveryFindBtnObject = function () {
   let btnObject, block;
   //find checked id
-  let input = document.querySelector('#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input.bx-soa-pp-company-checkbox')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input');
-	
-  let hidden = input ? '' : '-hidden';
+  let hidden = document.querySelector(
+    '#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input'
+  )
+    ? ''
+    : '-hidden';
 
   let id;
-  let inputs = [];
-  if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`);
-  } else if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`);
-  } else if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input`);
-  }
-	  
-  inputs.forEach((checkbox) => {
+  document
+    .querySelectorAll(
+      `#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`
+    )
+    .forEach((checkbox) => {
       if (checkbox.checked) {
         id = checkbox.id;
       }
-  });
+    });
 
   if (document.getElementById(id)) {
     block = document.getElementById(id).closest('.bx-soa-pp-company');
@@ -371,18 +366,17 @@ window.twinpxYadeliverySession = function (address, id) {
 };
 
 window.twinpxYadeliverySetCheckedStorage = function (onLoad) {
-  let input = document.querySelector('#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input.bx-soa-pp-company-checkbox')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input');
-	
-  let hidden = input ? '' : '-hidden';
+  let hidden = document.querySelector(
+    '#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input'
+  )
+    ? ''
+    : '-hidden';
 
   //onload - insert yadelivery button if checked
   //set session storage
-  let checkbox =
-	document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected .bx-soa-pp-company-graf-container input`)
-	|| document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input.bx-soa-pp-company-checkbox`)
-	|| document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input`);
+  let checkbox = document.querySelector(
+    `#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected .bx-soa-pp-company-graf-container input`
+  );
 
   if (checkbox) {
     if (onLoad) {
@@ -426,25 +420,20 @@ window.addEventListener('DOMContentLoaded', () => {
         e.target.closest('#bx-soa-delivery') &&
         !e.target.closest('.twpx_btn_wrapper')
       ) {
-		const input = 
-			block.querySelector('.bx-soa-pp-company-graf-container input')
-			|| block.querySelector('input.bx-soa-pp-company-checkbox')
-			|| block.querySelector('input');
-			
-		if (input) {
-			let id = input.id;
-			window.sessionStorage.setItem('twpxYadeliveryId', id);
+        let id = block.querySelector(
+          '.bx-soa-pp-company-graf-container input'
+        ).id;
+        window.sessionStorage.setItem('twpxYadeliveryId', id);
 
-			/*let btnObject;
-			if (window.twinpxYadeliveryButtons) {
-			  window.twinpxYadeliveryButtons.forEach((obj) => {
-				if (obj.id === id) {
-				  btnObject = Object.assign({}, obj);
-				}
-			  });
-			}
-			window.twinpxYadeliveryInsertButton(block, btnObject);*/
-		}
+        /*let btnObject;
+        if (window.twinpxYadeliveryButtons) {
+          window.twinpxYadeliveryButtons.forEach((obj) => {
+            if (obj.id === id) {
+              btnObject = Object.assign({}, obj);
+            }
+          });
+        }
+        window.twinpxYadeliveryInsertButton(block, btnObject);*/
       }
     });
   }
