@@ -384,6 +384,9 @@ body.no-scroll {
   width: 1076px;
   box-sizing: border-box;
 }
+#twpx_yadelivery_popup.popup-window.popup-window-with-titlebar .popup-window-content {
+    display: block !important;
+}
 .yd-popup-offers {
   position: absolute;
   top: 0;
@@ -641,7 +644,7 @@ a.yd-popup-offers__btn:active {
 .yd-popup-form input:not([type='radio']),
 .yd-popup-form .b-float-label textarea {
   background-color: #fff;
-  outline: 1px solid #c6cdd3;
+  outline: 1px solid #c6cdd3 !important;
   border: none;
   border-radius: 3px;
   height: 48px;
@@ -665,7 +668,7 @@ a.yd-popup-offers__btn:active {
 .yd-popup-form textarea.active {
   border-bottom: 0;
   box-shadow: none;
-  outline: 1px solid #80b6e3;
+  outline: 1px solid #80b6e3 !important;
 }
 
 .yd-popup-form input:focus:not([type='checkbox']) ~ label,
@@ -710,7 +713,7 @@ a.yd-popup-offers__btn:active {
 .yd-popup-form .b-float-label.invalid input:not([type='radio']),
 .yd-popup-form .b-float-label.invalid textarea {
   background-color: #ffefef;
-  outline: 1px solid #e38080;
+  outline: 1px solid #e38080 !important;
   color: #ff0000;
 }
 

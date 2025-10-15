@@ -639,7 +639,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
                 <div class="b-float-label" id="ydFormAddressBlock">
                     <textarea name="PropAddress" rows="10" cols="10" id="ydFormAddress" required="" data-code="PropAddress"></textarea>
-                    <label for="ydFormOffise">${BX.message(
+                    <label for="ydFormAddress">${BX.message(
                       'TWINPX_JS_ADDRESS'
                     )}</label>
                 </div>
