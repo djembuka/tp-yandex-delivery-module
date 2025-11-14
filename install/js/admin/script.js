@@ -1347,10 +1347,11 @@ function packageTabHtml(data) {
 				product.controls.forEach((control) => {
 					
 					if (control.property === 'text') {
+            const value = String(control.value).replace(/\"/g, '&quot;');
 						productControl = `
 							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
 								<div class="twpx-ydw-order-label">${control.label}</div>
-								<input type="text" name="${control.name}" value="${control.value}" class="twpx-ydw-order-input" disabled="">
+								<input type="text" name="${control.name}" value="${value}" class="twpx-ydw-order-input" disabled="">
 							</div>
 						`;
 					} else if (control.property === 'select') {
