@@ -2537,10 +2537,10 @@ function createNewDeliveryHtml(data) {
       <div class="b-float-label">
           <input name="PropCorp" id="ydFormCorp" type="text" value="${
             data.FIELDS.PropCorp
-          }" required="">
+          }">
           <label for="ydFormCorp"${
             data.FIELDS.PropCorp ? ' class="active"' : ''
-          }>${BX.message('TWINPX_YADELIVERY_KORP')}*</label>
+          }>${BX.message('TWINPX_YADELIVERY_KORP')}</label>
       </div>
       <div class="b-float-label">
           <input name="PropApartament" id="ydFormApartament" type="text" value="${
