@@ -211,10 +211,13 @@ window.newDeliveryPopupOnload = function () {
     e.preventDefault();
     const form = e.target;
     let focusElement;
-	
-	//change active tab (for the sake of height of the modal)
-	form.closest('.yd-popup-tabs').querySelector('.yd-popup-tabs__nav__item:first-child').click();
-	window.ydConfirmer.adjustPosition();
+
+    //change active tab (for the sake of height of the modal)
+    form
+      .closest('.yd-popup-tabs')
+      .querySelector('.yd-popup-tabs__nav__item:first-child')
+      .click();
+    window.ydConfirmer.adjustPosition();
 
     //clear error
     ydError.innerHTML = '';
@@ -367,12 +370,15 @@ window.newDeliveryPopupOnload = function () {
         offersError(BX.message('TWINPX_JS_NO_RESPONSE'));
       }
     }
-	
   });
 
-	if (ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]')) {
-		packageForm();
-	}
+  if (
+    ydForm
+      .closest('.yd-popup-content')
+      .querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]')
+  ) {
+    packageForm();
+  }
 };
 
 window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
@@ -494,10 +500,13 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
     e.preventDefault();
     const form = e.target;
     let focusElement;
-	
-	//change active tab (for the sake of height of the modal)
-	form.closest('.yd-popup-tabs').querySelector('.yd-popup-tabs__nav__item:first-child').click();
-	window.ydConfirmerPvz.adjustPosition();
+
+    //change active tab (for the sake of height of the modal)
+    form
+      .closest('.yd-popup-tabs')
+      .querySelector('.yd-popup-tabs__nav__item:first-child')
+      .click();
+    window.ydConfirmerPvz.adjustPosition();
 
     //clear error
     ydError.innerHTML = '';
@@ -1096,9 +1105,13 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
 
     return response.json();
   }
-  
-  if (ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]')) {
-	packageForm();
+
+  if (
+    ydForm
+      .closest('.yd-popup-content')
+      .querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]')
+  ) {
+    packageForm();
   }
 };
 
@@ -1196,18 +1209,26 @@ window.twinpxYadeliveryFillbutton = function (ydForm) {
                 label ? label.classList.add('active') : undefined;
               }
             });
-			
-			if (result.BOXES && result.PRODUCTS) {
-				const packageTab = ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__tabs__item[data-tab="package"]');
-				const packageNavTab = ydForm.closest('.yd-popup-content').querySelector('.yd-popup-tabs__nav__item[data-tab="package"]');
-				
-				packageNavTab.classList.remove('yd-popup-tabs__nav__item--hidden');
-				
-				if (packageTab) {
-					packageTab.innerHTML = packageTabHtml(result);
-					packageForm();
-				}
-			}
+
+            if (result.BOXES && result.PRODUCTS) {
+              const packageTab = ydForm
+                .closest('.yd-popup-content')
+                .querySelector(
+                  '.yd-popup-tabs__tabs__item[data-tab="package"]'
+                );
+              const packageNavTab = ydForm
+                .closest('.yd-popup-content')
+                .querySelector('.yd-popup-tabs__nav__item[data-tab="package"]');
+
+              packageNavTab.classList.remove(
+                'yd-popup-tabs__nav__item--hidden'
+              );
+
+              if (packageTab) {
+                packageTab.innerHTML = packageTabHtml(result);
+                packageForm();
+              }
+            }
           }
         } else {
           orderInput.focus();
@@ -1239,28 +1260,33 @@ window.twinpxYadeliveryPopupSettings = {
 };
 
 function packageTabHtml(data) {
-	
-	let boxes = '';
-	
-	if (data.BOXES && data.BOXES.forEach) {
-		data.BOXES.forEach((box) => {
-			let boxControl = '';
-			let cxControl = '';
-			let cyControl = '';
-			let czControl = '';
-			let wgControl = '';
-			
-			if (box.controls && box.controls.forEach) {
-				box.controls.forEach((control) => {
-					if (control.property === 'select') {
-						let options = '';
-						
-						if (control.options && control.options.forEach) {
-							control.options.forEach((optionItem) => {
-								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}${optionItem.custom === true ? ' data-custom="true"' : ''}>${optionItem.label}</option>`;
-							});
-						}
-						boxControl = `
+  let boxes = '';
+
+  if (data.BOXES && data.BOXES.forEach) {
+    data.BOXES.forEach((box) => {
+      let boxControl = '';
+      let cxControl = '';
+      let cyControl = '';
+      let czControl = '';
+      let wgControl = '';
+
+      if (box.controls && box.controls.forEach) {
+        box.controls.forEach((control) => {
+          if (control.property === 'select') {
+            let options = '';
+
+            if (control.options && control.options.forEach) {
+              control.options.forEach((optionItem) => {
+                options += `<option value="${optionItem.code}"${
+                  String(optionItem.code) === String(control.value)
+                    ? ' selected'
+                    : ''
+                }${optionItem.custom === true ? ' data-custom="true"' : ''}>${
+                  optionItem.label
+                }</option>`;
+              });
+            }
+            boxControl = `
 							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
 								<div class="twpx-ydw-order-label">${control.label}</div>
 								<select name="${control.name}" size="1" id="box" class="twpx-ydw-order-select">
@@ -1268,45 +1294,41 @@ function packageTabHtml(data) {
 								</select>
 							</div>
 						`;
-					}
-					else if (control.property === 'text') {
-						if (control.name.includes('cx')) {
-							cxControl = `
+          } else if (control.property === 'text') {
+            if (control.name.includes('cx')) {
+              cxControl = `
 								<div class="twpx-ydw-order-form-control">
 									<div class="twpx-ydw-order-label">${control.label}</div>
 									<input type="text" name="${control.name}" data-name="length" value="${control.value}" class="twpx-ydw-order-input">
 								</div>
 							`;
-						}
-						else if (control.name.includes('cy')) {
-							cyControl = `
+            } else if (control.name.includes('cy')) {
+              cyControl = `
 								<div class="twpx-ydw-order-form-control">
 									<div class="twpx-ydw-order-label">${control.label}</div>
 									<input type="text" name="${control.name}" data-name="width" value="${control.value}" class="twpx-ydw-order-input">
 								</div>
 							`;
-						}
-						else if (control.name.includes('cz')) {
-							czControl = `
+            } else if (control.name.includes('cz')) {
+              czControl = `
 								<div class="twpx-ydw-order-form-control">
 									<div class="twpx-ydw-order-label">${control.label}</div>
 									<input type="text" name="${control.name}" data-name="height" value="${control.value}" class="twpx-ydw-order-input">
 								</div>
 							`;
-						}
-						else if (control.name.includes('wg')) {
-							wgControl = `
+            } else if (control.name.includes('wg')) {
+              wgControl = `
 								<div class="twpx-ydw-order-form-control">
 									<div class="twpx-ydw-order-label">${control.label}</div>
 									<input type="text" name="${control.name}" data-name="weight" value="${control.value}" class="twpx-ydw-order-input">
 								</div>
 							`;
-						}
-					}
-				});
-			}
-			
-			boxes += `
+            }
+          }
+        });
+      }
+
+      boxes += `
 				<div class="twpx-ydw-order-form-block-content">
 					<div class="twpx-ydw-order-btn-remove">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -1332,49 +1354,51 @@ function packageTabHtml(data) {
 						</div>
 					</div>
 				</div>`;
-		});
-	}
-	
-	let products = '';
-	
-	if (data.PRODUCTS && data.PRODUCTS.forEach) {
-		data.PRODUCTS.forEach((product) => {
-			
-			let productControl = '';
-			let boxControl = '';
-			
-			if (product.controls && product.controls.forEach) {
-				product.controls.forEach((control) => {
-					
-					if (control.property === 'text') {
+    });
+  }
+
+  let products = '';
+
+  if (data.PRODUCTS && data.PRODUCTS.forEach) {
+    data.PRODUCTS.forEach((product) => {
+      let productControl = '';
+      let boxControl = '';
+
+      if (product.controls && product.controls.forEach) {
+        product.controls.forEach((control) => {
+          if (control.property === 'text') {
             const value = String(control.value).replace(/\"/g, '&quot;');
-						productControl = `
+            productControl = `
 							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active">
 								<div class="twpx-ydw-order-label">${control.label}</div>
 								<input type="text" name="${control.name}" value="${value}" class="twpx-ydw-order-input" disabled="">
 							</div>
 						`;
-					} else if (control.property === 'select') {
-						let options = '';
-						
-						if (control.options && control.options.forEach) {
-							control.options.forEach((optionItem) => {
-								options += `<option value="${optionItem.code}"${String(optionItem.code) === String(control.value) ? ' selected' : ''}>${optionItem.label}</option>`;
-							});
-						}
-						
-						boxControl = `
+          } else if (control.property === 'select') {
+            let options = '';
+
+            if (control.options && control.options.forEach) {
+              control.options.forEach((optionItem) => {
+                options += `<option value="${optionItem.code}"${
+                  String(optionItem.code) === String(control.value)
+                    ? ' selected'
+                    : ''
+                }>${optionItem.label}</option>`;
+              });
+            }
+
+            boxControl = `
 							<div class="twpx-ydw-order-form-control twpx-ydw-order-form-control--active twpx-ydw-order-form-control--product-box">
 								<div class="twpx-ydw-order-label">${control.label}</div>
 								<select name="${control.name}" class="twpx-ydw-order-select">${options}</select>
 								<div class="twpx-ydw-order-form-note">${control.hint_external}</div>
 							</div>
 						`;
-					}
-				});
-			}
-			
-			products += `
+          }
+        });
+      }
+
+      products += `
 				<div class="twpx-ydw-order-form-block-content">
 					<div class="twpx-ydw-order-form-block-description"><b>${product.heading}</b></div>
 					<div class="twpx-ydw-order-form-group">
@@ -1385,18 +1409,22 @@ function packageTabHtml(data) {
 					</div>
 				</div>
 			`;
-		});
-	}
-	
-    return `
+    });
+  }
+
+  return `
 		<div id="twinpxYadeliveryBoxes" class="twpx-ydw-order-form-block" data-barcode="someBarcode">
-			<div class="twpx-ydw-order-form-block-title">${BX.message('TWINPX_MODAL_PACKAGE')}</div>
+			<div class="twpx-ydw-order-form-block-title">${BX.message(
+        'TWINPX_MODAL_PACKAGE'
+      )}</div>
 			<div class="twpx-ydw-order-form-block-text">${BX.message('Box_desc')}</div>
 			${boxes}
 			<div class="twpx-ydw-order-add-button">${BX.message('Add_box')}</div>
 		</div>
 		<div id="twinpxYadeliveryProducts" class="twpx-ydw-order-form-block">
-			<div class="twpx-ydw-order-form-block-title">${BX.message('Product_header')}</div>
+			<div class="twpx-ydw-order-form-block-title">${BX.message(
+        'Product_header'
+      )}</div>
 			<div class="twpx-ydw-order-form-block-text">${BX.message('Product_desc')}</div>
 			${products}
 		</div>
@@ -1404,220 +1432,223 @@ function packageTabHtml(data) {
 }
 
 function packageForm() {
-	const boxesBlock = document.querySelector('#twinpxYadeliveryBoxes');
-	const productsBlock = document.querySelector('#twinpxYadeliveryProducts');
+  const boxesBlock = document.querySelector('#twinpxYadeliveryBoxes');
+  const productsBlock = document.querySelector('#twinpxYadeliveryProducts');
 
-	const storage = {
-		boxes: {
-			id: null,
-			value: {
-				checked: null,
-				customSize: {},
-			},
-		},
-		from: {
-			id: null,
-			value: {},
-		},
-	};
+  const storage = {
+    boxes: {
+      id: null,
+      value: {
+        checked: null,
+        customSize: {},
+      },
+    },
+    from: {
+      id: null,
+      value: {},
+    },
+  };
 
-	// set initial values for the storage
-	(() => {
-		const blocks = boxesBlock.querySelectorAll('.twpx-ydw-order-form-block-content');
-		const lastBlock = blocks[blocks.length - 1];
+  // set initial values for the storage
+  (() => {
+    const blocks = boxesBlock.querySelectorAll(
+      '.twpx-ydw-order-form-block-content'
+    );
+    const lastBlock = blocks[blocks.length - 1];
 
-		// checked
-		storage.boxes.value.checked = lastBlock.querySelector('select').value;
+    // checked
+    storage.boxes.value.checked = lastBlock.querySelector('select').value;
 
-		// customSize
-		lastBlock.querySelector('.twpx-ydw-order-form-control-custom').querySelectorAll('input[type="text"]').forEach(control => {
-			storage.boxes.value.customSize[control.getAttribute('data-name')] = control.value;
-		});
-	})();
+    // customSize
+    lastBlock
+      .querySelector('.twpx-ydw-order-form-control-custom')
+      .querySelectorAll('input[type="text"]')
+      .forEach((control) => {
+        storage.boxes.value.customSize[control.getAttribute('data-name')] =
+          control.value;
+      });
+  })();
 
-	function inputEvents(control, block) {
-		if (control.value && control.value.trim() !== '') {
-		  block.classList.add('twpx-ydw-order-form-control--active');
-		}
+  function inputEvents(control, block) {
+    if (control.value && control.value.trim() !== '') {
+      block.classList.add('twpx-ydw-order-form-control--active');
+    }
 
-		control.addEventListener('focus', () => {
-		  block.classList.add('twpx-ydw-order-form-control--active');
-		});
+    control.addEventListener('focus', () => {
+      block.classList.add('twpx-ydw-order-form-control--active');
+    });
 
-		control.addEventListener('blur', () => {
-		  if (control.value.trim() !== '') {
-			block.classList.add('twpx-ydw-order-form-control--active');
-		  } else {
-			block.classList.remove('twpx-ydw-order-form-control--active');
-		  }
-		  //check required
-		  if (control.getAttribute('required')) {
-			if (control.value.trim() === '') {
-			  block.classList.add('twpx-ydw-order-form-control--invalid');
-			  isFormValid = false;
-			} else {
-			  block.classList.remove('twpx-ydw-order-form-control--invalid');
-			}
-			// validateForm();
-			disabledPeriodSelects();
-			setOrderButtonActive();
-		  }
-		});
+    control.addEventListener('blur', () => {
+      if (control.value.trim() !== '') {
+        block.classList.add('twpx-ydw-order-form-control--active');
+      } else {
+        block.classList.remove('twpx-ydw-order-form-control--active');
+      }
+      //check required
+      if (control.getAttribute('required')) {
+        if (control.value.trim() === '') {
+          block.classList.add('twpx-ydw-order-form-control--invalid');
+          isFormValid = false;
+        } else {
+          block.classList.remove('twpx-ydw-order-form-control--invalid');
+        }
+        // validateForm();
+        disabledPeriodSelects();
+        setOrderButtonActive();
+      }
+    });
 
-		//this is not required, because we have document onclick
-		//just to be sure
-		control.addEventListener('keyup', () => {
-		//   hideError();
-		});
+    //this is not required, because we have document onclick
+    //just to be sure
+    control.addEventListener('keyup', () => {
+      //   hideError();
+    });
 
-		//boxes custom
-		if (
-		  control.closest('.twpx-ydw-order-form-block') &&
-		  control.closest('.twpx-ydw-order-form-block').id ===
-			'twinpxYadeliveryBoxes'
-		) {
-		  control.addEventListener('keyup', (e) => {
-			storage.boxes.value.customSize[control.getAttribute('data-name')] =
-			  control.value;
-			// setBX24Storage(
-			//   storage.boxes.id,
-			//   JSON.stringify(storage.boxes.value)
-			// );
-		  });
-		}
+    //boxes custom
+    if (
+      control.closest('.twpx-ydw-order-form-block') &&
+      control.closest('.twpx-ydw-order-form-block').id ===
+        'twinpxYadeliveryBoxes'
+    ) {
+      control.addEventListener('keyup', (e) => {
+        storage.boxes.value.customSize[control.getAttribute('data-name')] =
+          control.value;
+        // setBX24Storage(
+        //   storage.boxes.id,
+        //   JSON.stringify(storage.boxes.value)
+        // );
+      });
+    }
 
-		//list
-		const listButton = block.querySelector(
-		  '.twpx-ydw-order-form-control--map .twpx-ydw-order-input'
-		);
+    //list
+    const listButton = block.querySelector(
+      '.twpx-ydw-order-form-control--map .twpx-ydw-order-input'
+    );
 
-		if (listButton) {
-		  listButton.addEventListener('click', (e) => {
-			e.preventDefault();
+    if (listButton) {
+      listButton.addEventListener('click', (e) => {
+        e.preventDefault();
 
-			const input = listButton
-			  .closest('.twpx-ydw-order-form-control')
-			  .querySelector('.twpx-ydw-order-input');
+        const input = listButton
+          .closest('.twpx-ydw-order-form-control')
+          .querySelector('.twpx-ydw-order-input');
 
-			const hiddenInput = listButton
-			  .closest('.twpx-ydw-order-form-control')
-			  .querySelector('input[type="hidden"]');
+        const hiddenInput = listButton
+          .closest('.twpx-ydw-order-form-control')
+          .querySelector('input[type="hidden"]');
 
-			const json =
-			  hiddenInput.value.trim() !== ''
-				? JSON.parse(hiddenInput.value)
-				: {};
+        const json =
+          hiddenInput.value.trim() !== '' ? JSON.parse(hiddenInput.value) : {};
 
-			input.setAttribute('data-active', true);
+        input.setAttribute('data-active', true);
 
-			if (input.value.trim() !== '') {
-			  //open map
-			  document.dispatchEvent(
-				new CustomEvent('twpxYdwInitMap', {
-				  detail: json,
-				})
-			  );
-			} else {
-			  //open location
-			  document.dispatchEvent(new CustomEvent('twpxYdwInitLocation'));
-			}
-		  });
-		}
+        if (input.value.trim() !== '') {
+          //open map
+          document.dispatchEvent(
+            new CustomEvent('twpxYdwInitMap', {
+              detail: json,
+            })
+          );
+        } else {
+          //open location
+          document.dispatchEvent(new CustomEvent('twpxYdwInitLocation'));
+        }
+      });
+    }
 
-		//calc
-		const calcButton = block.querySelector('.twpx-ydw-order-btn-calc');
+    //calc
+    const calcButton = block.querySelector('.twpx-ydw-order-btn-calc');
 
-		if (calcButton) {
-		  const paymentInput = orderBlock.querySelector('#twpxYdwPaymentInput');
+    if (calcButton) {
+      const paymentInput = orderBlock.querySelector('#twpxYdwPaymentInput');
 
-		  calcButton.addEventListener('click', async (e) => {
-			e.preventDefault();
+      calcButton.addEventListener('click', async (e) => {
+        e.preventDefault();
 
-			calcButton.classList.add('twpx-ydw-order-btn--loading');
+        calcButton.classList.add('twpx-ydw-order-btn--loading');
 
-			let formData = new FormData(orderForm),
-			  controller = new AbortController(),
-			  response,
-			  result;
+        let formData = new FormData(orderForm),
+          controller = new AbortController(),
+          response,
+          result;
 
-			setTimeout(() => {
-			  if (!response) {
-				controller.abort();
-				showError(
-				  'Connection aborted.',
-				  block.closest('.twpx-ydw-order-form-block')
-				);
-			  }
-			}, 20000);
+        setTimeout(() => {
+          if (!response) {
+            controller.abort();
+            showError(
+              'Connection aborted.',
+              block.closest('.twpx-ydw-order-form-block')
+            );
+          }
+        }, 20000);
 
-			try {
-			  response = await fetch(paymentInput.getAttribute('data-url'), {
-				method: 'POST',
-				body: formData,
-				signal: controller.signal,
-			  });
+        try {
+          response = await fetch(paymentInput.getAttribute('data-url'), {
+            method: 'POST',
+            body: formData,
+            signal: controller.signal,
+          });
 
-			  result = await response.json();
+          result = await response.json();
 
-			  calcButton.classList.remove('twpx-ydw-order-btn--loading');
+          calcButton.classList.remove('twpx-ydw-order-btn--loading');
 
-			  if (result && typeof result === 'object') {
-				if (result.status === 'success') {
-				  if (String(result.data.num)) {
-					setInputValue(
-					  paymentInput.querySelector('input'),
-					  result.data.num
-					);
-					paymentInput
-					  .querySelector('input')
-					  .dispatchEvent(new Event('blur'));
-				  }
-				} else if (result.errors) {
-				  calcButton.classList.remove('twpx-ydw-order-btn--loading');
+          if (result && typeof result === 'object') {
+            if (result.status === 'success') {
+              if (String(result.data.num)) {
+                setInputValue(
+                  paymentInput.querySelector('input'),
+                  result.data.num
+                );
+                paymentInput
+                  .querySelector('input')
+                  .dispatchEvent(new Event('blur'));
+              }
+            } else if (result.errors) {
+              calcButton.classList.remove('twpx-ydw-order-btn--loading');
 
-				  showError(
-					result.errors[0].message,
-					block.closest('.twpx-ydw-order-form-block')
-				  );
-				}
-			  }
-			} catch (err) {
-			  calcButton.classList.remove('twpx-ydw-order-btn--loading');
+              showError(
+                result.errors[0].message,
+                block.closest('.twpx-ydw-order-form-block')
+              );
+            }
+          }
+        } catch (err) {
+          calcButton.classList.remove('twpx-ydw-order-btn--loading');
 
-			  showError(err, block.closest('.twpx-ydw-order-form-block'));
-			}
-		  });
-		}
+          showError(err, block.closest('.twpx-ydw-order-form-block'));
+        }
+      });
+    }
 
-		//close
-		const closeButton = block.querySelector('.twpx-ydw-order-form-close');
+    //close
+    const closeButton = block.querySelector('.twpx-ydw-order-form-close');
 
-		if (closeButton) {
-		  closeButton.addEventListener('click', async (e) => {
-			e.preventDefault();
+    if (closeButton) {
+      closeButton.addEventListener('click', async (e) => {
+        e.preventDefault();
 
-			setInputValue(control, '');
+        setInputValue(control, '');
 
-			const hidden =
-			  control.parentNode.querySelector('input[type=hidden]');
-			hidden.value = '';
+        const hidden = control.parentNode.querySelector('input[type=hidden]');
+        hidden.value = '';
 
-			const textDiv = control.parentNode.querySelector(
-			  '.twpx-ydw-order-form-control-text'
-			);
-			if (textDiv) {
-			  textDiv.style.display = 'none';
-			  textDiv.textContent = '';
-			}
+        const textDiv = control.parentNode.querySelector(
+          '.twpx-ydw-order-form-control-text'
+        );
+        if (textDiv) {
+          textDiv.style.display = 'none';
+          textDiv.textContent = '';
+        }
 
-			// validateForm();
-			disabledPeriodSelects();
-			setOrderButtonActive();
-		  });
-		}
-	}
+        // validateForm();
+        disabledPeriodSelects();
+        setOrderButtonActive();
+      });
+    }
+  }
 
-	function setInputValue(input, value) {
+  function setInputValue(input, value) {
     const block = input.closest('.twpx-ydw-order-form-control');
     input.value !== undefined
       ? (input.value = value)
@@ -1630,38 +1661,103 @@ function packageForm() {
     }
   }
 
-	//boxes block
-    let boxesIndex = 0;
-    const boxesArray = []; //array to set boxes in order
-    const boxTitle = boxesBlock
-      .querySelector('.twpx-ydw-order-form-block-description b')
-      .textContent.trim()
-      .split(' ')[0];
-    const customOption = boxesBlock.querySelector('[data-custom="true"]');
-    const customOptionValue =
-      customOption &&
-      (customOption.getAttribute('value') ||
-        customOption.getAttribute('data-value'));
+  //boxes block
+  let boxesIndex = 0;
+  const boxesArray = []; //array to set boxes in order
+  const boxTitle = boxesBlock
+    .querySelector('.twpx-ydw-order-form-block-description b')
+    .textContent.trim()
+    .split(' ')[0];
+  const customOption = boxesBlock.querySelector('[data-custom="true"]');
+  const customOptionValue =
+    customOption &&
+    (customOption.getAttribute('value') ||
+      customOption.getAttribute('data-value'));
 
-    //create block template for adding
-    const blockForAdding = createBlockForAdding();
+  //create block template for adding
+  const blockForAdding = createBlockForAdding();
 
-    //on page load - show/hide custom block
-    boxesBlock
-      .querySelectorAll('.twpx-ydw-order-form-block-content')
-      .forEach((box) => {
-        const select =
-          box.querySelector('select') ||
-          window.twpxSelectManager.selectObject[
-            box.querySelector('.twpx-select').getAttribute('data-id')
-          ];
-        if (storage.boxes.value.checked) {
+  //on page load - show/hide custom block
+  boxesBlock
+    .querySelectorAll('.twpx-ydw-order-form-block-content')
+    .forEach((box) => {
+      const select =
+        box.querySelector('select') ||
+        window.twpxSelectManager.selectObject[
+          box.querySelector('.twpx-select').getAttribute('data-id')
+        ];
+      if (storage.boxes.value.checked) {
+        select.value = storage.boxes.value.checked;
+      }
+      if (Object.keys(storage.boxes.value.customSize).length) {
+        box.querySelectorAll('.twpx-ydw-order-input').forEach((control) => {
+          const value =
+            storage.boxes.value.customSize[control.getAttribute('data-name')];
+
+          if (value) {
+            control.value = value;
+            control
+              .closest('.twpx-ydw-order-form-control')
+              .classList.add('twpx-ydw-order-form-control--active');
+          }
+        });
+      }
+      const selectValue = select.value;
+      const customBlock = box.querySelector(
+        '.twpx-ydw-order-form-control-custom'
+      );
+      if (selectValue === customOptionValue) {
+        customBlock.style.display = 'grid';
+      } else {
+        customBlock.style.display = 'none';
+      }
+    });
+
+  //box counter
+  boxesBlock
+    .querySelectorAll('.twpx-ydw-order-form-block-content')
+    .forEach((box) => {
+      boxesCounter(box);
+    });
+
+  //products box select
+  createProductsSelect();
+
+  //select events
+  selectEvents(boxesBlock);
+
+  //add button
+  boxesBlock
+    .querySelectorAll('.twpx-ydw-order-add-button')
+    .forEach((addButton) => {
+      addButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const newBlock = blockForAdding.cloneNode(true);
+
+        //twpx select
+        newBlock.querySelectorAll('.twpx-select').forEach((select) => {
+          new twpxSelect({
+            select,
+            checked: storage.boxes.value.checked,
+          });
+          showCustomControls(select, storage.boxes.value.checked);
+        });
+        //select
+        newBlock.querySelectorAll('select').forEach((select) => {
           select.value = storage.boxes.value.checked;
-        }
-        if (Object.keys(storage.boxes.value.customSize).length) {
-          box
-            .querySelectorAll('.twpx-ydw-order-input')
-            .forEach((control) => {
+          showCustomControls(select, storage.boxes.value.checked);
+        });
+
+        addButton.before(newBlock);
+        boxesCounter(newBlock);
+        createProductsSelect(null, null);
+        showDeleteButtons(boxesBlock);
+
+        newBlock
+          .querySelectorAll('.twpx-ydw-order-input')
+          .forEach((control) => {
+            if (control.getAttribute('data-name')) {
               const value =
                 storage.boxes.value.customSize[
                   control.getAttribute('data-name')
@@ -1669,297 +1765,214 @@ function packageForm() {
 
               if (value) {
                 control.value = value;
-                control
-                  .closest('.twpx-ydw-order-form-control')
-                  .classList.add('twpx-ydw-order-form-control--active');
               }
-            });
-        }
-        const selectValue = select.value;
-        const customBlock = box.querySelector(
-          '.twpx-ydw-order-form-control-custom'
-        );
-        if (selectValue === customOptionValue) {
-          customBlock.style.display = 'grid';
-        } else {
-          customBlock.style.display = 'none';
-        }
-      });
+            }
 
-    //box counter
-    boxesBlock
-      .querySelectorAll('.twpx-ydw-order-form-block-content')
-      .forEach((box) => {
-        boxesCounter(box);
-      });
-
-    //products box select
-    createProductsSelect();
-
-    //select events
-    selectEvents(boxesBlock);
-
-    //add button
-    boxesBlock
-      .querySelectorAll('.twpx-ydw-order-add-button')
-      .forEach((addButton) => {
-        addButton.addEventListener('click', (e) => {
-          e.preventDefault();
-
-          const newBlock = blockForAdding.cloneNode(true);
-
-          //twpx select
-          newBlock.querySelectorAll('.twpx-select').forEach((select) => {
-            new twpxSelect({
-              select,
-              checked: storage.boxes.value.checked,
-            });
-            showCustomControls(select, storage.boxes.value.checked);
-          });
-          //select
-          newBlock.querySelectorAll('select').forEach((select) => {
-            select.value = storage.boxes.value.checked;
-            showCustomControls(select, storage.boxes.value.checked);
+            inputEvents(
+              control,
+              control.closest('.twpx-ydw-order-form-control')
+            );
           });
 
-          addButton.before(newBlock);
-          boxesCounter(newBlock);
-          createProductsSelect(null, null);
-          showDeleteButtons(boxesBlock);
-
-          newBlock
-            .querySelectorAll('.twpx-ydw-order-input')
-            .forEach((control) => {
-              if (control.getAttribute('data-name')) {
-                const value =
-                  storage.boxes.value.customSize[
-                    control.getAttribute('data-name')
-                  ];
-
-                if (value) {
-                  control.value = value;
-                }
-              }
-
-              inputEvents(
-                control,
-                control.closest('.twpx-ydw-order-form-control')
-              );
-            });
-
-          selectEvents(newBlock);
+        selectEvents(newBlock);
         //   fitWindow();
-        });
       });
-
-    //delete button
-    boxesBlock.addEventListener('click', (e) => {
-      if (e.target.classList.contains('twpx-ydw-order-btn-remove')) {
-        const content = e.target.closest(
-          '.twpx-ydw-order-form-block-content'
-        );
-        const indexToRemove = content.getAttribute('data-index');
-        const currentIndex = boxesArray.findIndex(
-          (el) => String(el) === String(indexToRemove)
-        );
-
-        content.remove();
-
-        boxesArray.splice(currentIndex, 1);
-
-        createProductsSelect(indexToRemove, currentIndex);
-        showDeleteButtons(boxesBlock);
-
-        // validateForm();
-        disabledPeriodSelects();
-        setOrderButtonActive();
-      }
     });
 
-    function selectEvents(block) {
-      if (block.querySelector('.twpx-select')) {
-        block.querySelectorAll('.twpx-select').forEach((boxesSelect) => {
-          const boxesTwpxSelect =
-            window.twpxSelectManager.selectObject[
-              boxesSelect.getAttribute('data-id')
-            ];
-          boxesTwpxSelect.onChange = () => {
-            showCustomControls(boxesSelect, boxesTwpxSelect.value);
-            //storage
-            storage.boxes.value.checked = boxesTwpxSelect.value;
-            // setBX24Storage(
-            //   storage.boxes.id,
-            //   JSON.stringify(storage.boxes.value)
-            // );
-            // fitWindow();
-          };
-        });
-      } else {
-        block.addEventListener('change', (e) => {
-          if (e.target.tagName.toLowerCase() === 'select') {
-            showCustomControls(e.target, e.target.value);
-            //storage
-            storage.boxes.value.checked = e.target.value;
-            // setBX24Storage(
-            //   storage.boxes.id,
-            //   JSON.stringify(storage.boxes.value)
-            // );
-          }
-        });
-      }
-    }
-
-    function showCustomControls(select, value) {
-      const customBlock = select
-        .closest('.twpx-ydw-order-form-wrapper')
-        .querySelector('.twpx-ydw-order-form-control-custom');
-
-      if (value === customOptionValue) {
-        customBlock.style.display = 'grid';
-      } else {
-        customBlock.style.display = 'none';
-      }
-    }
-
-    function showDeleteButtons(block) {
-      if (
-        block.querySelectorAll('.twpx-ydw-order-form-block-content')
-          .length > 1
-      ) {
-        block.classList.add('twpx-ydw-order-form-block--multiple');
-      } else {
-        block.classList.remove('twpx-ydw-order-form-block--multiple');
-      }
-    }
-
-    function createBlockForAdding() {
-      const blockForAdding = boxesBlock
-        .querySelector('.twpx-ydw-order-form-block-content')
-        .cloneNode(true);
-      const customBlock = blockForAdding.querySelector(
-        '.twpx-ydw-order-form-control-custom'
+  //delete button
+  boxesBlock.addEventListener('click', (e) => {
+    if (e.target.classList.contains('twpx-ydw-order-btn-remove')) {
+      const content = e.target.closest('.twpx-ydw-order-form-block-content');
+      const indexToRemove = content.getAttribute('data-index');
+      const currentIndex = boxesArray.findIndex(
+        (el) => String(el) === String(indexToRemove)
       );
 
-      blockForAdding
-        .querySelectorAll('.twpx-ydw-order-form-control')
-        .forEach((formControl) => {
-          formControl.classList.remove(
-            'twpx-ydw-order-form-control--invalid'
-          );
-          const input = formControl.querySelector('.twpx-ydw-order-input ');
-          const select = formControl.querySelector(
-            '.twpx-ydw-order-select '
-          );
-          const twpxSelectElement =
-            formControl.querySelector('.twpx-select');
+      content.remove();
 
-          if (input) {
-            input.value = '';
-            inputEvents(input, formControl);
-            formControl.classList.remove(
-              'twpx-ydw-order-form-control--active'
-            );
-          } else if (select) {
-            if (select.value === customOptionValue) {
-              customBlock.style.display = 'grid';
-            } else {
-              customBlock.style.display = 'none';
-            }
-          } else if (twpxSelectElement) {
-            if (
-              twpxSelectElement.querySelector('[type="hidden"]').value ===
-              customOptionValue
-            ) {
-              customBlock.style.display = 'grid';
-            } else {
-              customBlock.style.display = 'none';
-            }
-          }
-        });
-      return blockForAdding;
+      boxesArray.splice(currentIndex, 1);
+
+      createProductsSelect(indexToRemove, currentIndex);
+      showDeleteButtons(boxesBlock);
+
+      // validateForm();
+      disabledPeriodSelects();
+      setOrderButtonActive();
     }
+  });
 
-    function boxesCounter(boxContainer) {
-      //boxesArray
-      boxesArray.push(boxesIndex);
-      //index
-      boxContainer.setAttribute('data-index', boxesIndex);
-      boxesIndex++;
-      //title
-      boxContainer.querySelector(
-        '.twpx-ydw-order-form-block-description b'
-      ).textContent = `${boxTitle} ${boxesIndex}`;
-      //name attribute
-      boxContainer.querySelectorAll('[name]').forEach((control) => {
-        let name = control.getAttribute('name');
-        control.setAttribute('name', name.replace(/\d/g, boxesIndex));
+  function selectEvents(block) {
+    if (block.querySelector('.twpx-select')) {
+      block.querySelectorAll('.twpx-select').forEach((boxesSelect) => {
+        const boxesTwpxSelect =
+          window.twpxSelectManager.selectObject[
+            boxesSelect.getAttribute('data-id')
+          ];
+        boxesTwpxSelect.onChange = () => {
+          showCustomControls(boxesSelect, boxesTwpxSelect.value);
+          //storage
+          storage.boxes.value.checked = boxesTwpxSelect.value;
+          // setBX24Storage(
+          //   storage.boxes.id,
+          //   JSON.stringify(storage.boxes.value)
+          // );
+          // fitWindow();
+        };
+      });
+    } else {
+      block.addEventListener('change', (e) => {
+        if (e.target.tagName.toLowerCase() === 'select') {
+          showCustomControls(e.target, e.target.value);
+          //storage
+          storage.boxes.value.checked = e.target.value;
+          // setBX24Storage(
+          //   storage.boxes.id,
+          //   JSON.stringify(storage.boxes.value)
+          // );
+        }
       });
     }
+  }
 
-    function createProductsSelect(indexToRemove, currentIndex) {
-      //productSelect
-      //select
-      productsBlock
-        .querySelectorAll(
-          '.twpx-ydw-order-form-control--product-box select'
-        )
-        .forEach((select) => {
-          let value = select.value;
-          let options = ``;
+  function showCustomControls(select, value) {
+    const customBlock = select
+      .closest('.twpx-ydw-order-form-wrapper')
+      .querySelector('.twpx-ydw-order-form-control-custom');
 
-          if (currentIndex === 0) {
-            value = 1 * boxesArray[0] + 1;
-          } else if (
-            indexToRemove &&
-            String(value) === String(1 * indexToRemove + 1)
-          ) {
-            value = 1 * boxesArray[currentIndex - 1] + 1;
-          }
-
-          boxesArray.forEach((boxIndex) => {
-            let selected = ``;
-            if (String(1 * boxIndex + 1) === String(value)) {
-              selected = ` selected`;
-            }
-            options += `<option value="${1 * boxIndex + 1}"${selected}>${
-              1 * boxIndex + 1
-            }</option>`;
-          });
-          select.innerHTML = options;
-        });
-
-      //twpxSelect
-      productsBlock
-        .querySelectorAll(
-          '.twpx-ydw-order-form-control--product-box .twpx-select'
-        )
-        .forEach((select) => {
-          const productsTwpxSelect =
-            window.twpxSelectManager.selectObject[
-              select.getAttribute('data-id')
-            ];
-          let value = productsTwpxSelect.value;
-
-          if (currentIndex === 0 || currentIndex === undefined) {
-            value = String(1 * boxesArray[0] + 1);
-          } else if (
-            indexToRemove &&
-            String(value) === String(1 * indexToRemove + 1)
-          ) {
-            value = String(1 * boxesArray[currentIndex - 1] + 1);
-          }
-
-          let arr = [];
-          boxesArray.forEach((boxIndex) => {
-            arr.push({
-              code: String(1 * boxIndex + 1),
-              name: String(1 * boxIndex + 1),
-            });
-          });
-
-          productsTwpxSelect.recreate({ options: arr, val: value });
-        });
+    if (value === customOptionValue) {
+      customBlock.style.display = 'grid';
+    } else {
+      customBlock.style.display = 'none';
     }
+  }
+
+  function showDeleteButtons(block) {
+    if (
+      block.querySelectorAll('.twpx-ydw-order-form-block-content').length > 1
+    ) {
+      block.classList.add('twpx-ydw-order-form-block--multiple');
+    } else {
+      block.classList.remove('twpx-ydw-order-form-block--multiple');
+    }
+  }
+
+  function createBlockForAdding() {
+    const blockForAdding = boxesBlock
+      .querySelector('.twpx-ydw-order-form-block-content')
+      .cloneNode(true);
+    const customBlock = blockForAdding.querySelector(
+      '.twpx-ydw-order-form-control-custom'
+    );
+
+    blockForAdding
+      .querySelectorAll('.twpx-ydw-order-form-control')
+      .forEach((formControl) => {
+        formControl.classList.remove('twpx-ydw-order-form-control--invalid');
+        const input = formControl.querySelector('.twpx-ydw-order-input ');
+        const select = formControl.querySelector('.twpx-ydw-order-select ');
+        const twpxSelectElement = formControl.querySelector('.twpx-select');
+
+        if (input) {
+          input.value = '';
+          inputEvents(input, formControl);
+          formControl.classList.remove('twpx-ydw-order-form-control--active');
+        } else if (select) {
+          if (select.value === customOptionValue) {
+            customBlock.style.display = 'grid';
+          } else {
+            customBlock.style.display = 'none';
+          }
+        } else if (twpxSelectElement) {
+          if (
+            twpxSelectElement.querySelector('[type="hidden"]').value ===
+            customOptionValue
+          ) {
+            customBlock.style.display = 'grid';
+          } else {
+            customBlock.style.display = 'none';
+          }
+        }
+      });
+    return blockForAdding;
+  }
+
+  function boxesCounter(boxContainer) {
+    //boxesArray
+    boxesArray.push(boxesIndex);
+    //index
+    boxContainer.setAttribute('data-index', boxesIndex);
+    boxesIndex++;
+    //title
+    boxContainer.querySelector(
+      '.twpx-ydw-order-form-block-description b'
+    ).textContent = `${boxTitle} ${boxesIndex}`;
+    //name attribute
+    boxContainer.querySelectorAll('[name]').forEach((control) => {
+      let name = control.getAttribute('name');
+      control.setAttribute('name', name.replace(/\d/g, boxesIndex));
+    });
+  }
+
+  function createProductsSelect(indexToRemove, currentIndex) {
+    //productSelect
+    //select
+    productsBlock
+      .querySelectorAll('.twpx-ydw-order-form-control--product-box select')
+      .forEach((select) => {
+        let value = select.value;
+        let options = ``;
+
+        if (currentIndex === 0) {
+          value = 1 * boxesArray[0] + 1;
+        } else if (
+          indexToRemove &&
+          String(value) === String(1 * indexToRemove + 1)
+        ) {
+          value = 1 * boxesArray[currentIndex - 1] + 1;
+        }
+
+        boxesArray.forEach((boxIndex) => {
+          let selected = ``;
+          if (String(1 * boxIndex + 1) === String(value)) {
+            selected = ` selected`;
+          }
+          options += `<option value="${1 * boxIndex + 1}"${selected}>${
+            1 * boxIndex + 1
+          }</option>`;
+        });
+        select.innerHTML = options;
+      });
+
+    //twpxSelect
+    productsBlock
+      .querySelectorAll(
+        '.twpx-ydw-order-form-control--product-box .twpx-select'
+      )
+      .forEach((select) => {
+        const productsTwpxSelect =
+          window.twpxSelectManager.selectObject[select.getAttribute('data-id')];
+        let value = productsTwpxSelect.value;
+
+        if (currentIndex === 0 || currentIndex === undefined) {
+          value = String(1 * boxesArray[0] + 1);
+        } else if (
+          indexToRemove &&
+          String(value) === String(1 * indexToRemove + 1)
+        ) {
+          value = String(1 * boxesArray[currentIndex - 1] + 1);
+        }
+
+        let arr = [];
+        boxesArray.forEach((boxIndex) => {
+          arr.push({
+            code: String(1 * boxIndex + 1),
+            name: String(1 * boxIndex + 1),
+          });
+        });
+
+        productsTwpxSelect.recreate({ options: arr, val: value });
+      });
+  }
 }
 
 //function from twinpx_delivery_offers.php
@@ -2469,30 +2482,93 @@ function newDeliveryPvz(orderId, pvzId, chosenAddress) {
 }
 
 function createNewDeliveryHtml(data) {
-	let fieldsHidden = '';
-	
-	if (data.FIELDS_HIDDEN && typeof data.FIELDS_HIDDEN === 'object') {
-		Object.entries(data.FIELDS_HIDDEN).forEach((entry) => {
-			fieldsHidden += `<input type="hidden" id="${entry[0]}" name="${entry[0]}" value="${entry[1]}">`;
-		});
-	}
-	let paymentOptions = '';
-	
-	if (data.PAYMENT_TYPE && typeof data.PAYMENT_TYPE === 'object') {
-		Object.entries(data.PAYMENT_TYPE).forEach((entry) => {
-			paymentOptions += `<option value="${entry[0]}"${data.FIELDS && data.FIELDS.PAY_TYPE && data.FIELDS.PAY_TYPE===entry[0] ? 'selected="selected"' : ''}>${entry[1]}</option>`;
-		});
-	}
-	
-	const packageTab = packageTabHtml(data);
-	
-	return `
+  let fieldsHidden = '';
+
+  if (data.FIELDS_HIDDEN && typeof data.FIELDS_HIDDEN === 'object') {
+    Object.entries(data.FIELDS_HIDDEN).forEach((entry) => {
+      fieldsHidden += `<input type="hidden" id="${entry[0]}" name="${entry[0]}" value="${entry[1]}">`;
+    });
+  }
+  let paymentOptions = '';
+
+  if (data.PAYMENT_TYPE && typeof data.PAYMENT_TYPE === 'object') {
+    Object.entries(data.PAYMENT_TYPE).forEach((entry) => {
+      paymentOptions += `<option value="${entry[0]}"${
+        data.FIELDS && data.FIELDS.PAY_TYPE && data.FIELDS.PAY_TYPE === entry[0]
+          ? 'selected="selected"'
+          : ''
+      }>${entry[1]}</option>`;
+    });
+  }
+
+  const packageTab = packageTabHtml(data);
+
+  let addressFields = '';
+
+  if (data.FIELDS.PropAddress !== undefined) {
+    addressFields = `
+      <div class="b-float-label">
+          <textarea name="PropAddress" id="ydFormAddress" required="" rows="10" cols="10">${
+            data.FIELDS.PropAddress
+          }</textarea>
+          <label for="ydFormAddress"${
+            data.FIELDS.PropAddress ? ' class="active"' : ''
+          }>${BX.message('TWINPX_YADELIVERY_ADDRESS')}*</label>
+      </div>
+    `;
+  } else {
+    addressFields = `
+      <div class="b-float-label">
+          <input name="PropStreet" id="ydFormStreet" type="text" value="${
+            data.FIELDS.PropStreet
+          }" required="">
+          <label for="ydFormStreet"${
+            data.FIELDS.PropStreet ? ' class="active"' : ''
+          }>${BX.message('TWINPX_YADELIVERY_STREET')}*</label>
+      </div>
+      <div class="b-float-label">
+          <input name="PropHome" id="ydFormHome" type="text" value="${
+            data.FIELDS.PropHome
+          }" required="">
+          <label for="ydFormHome"${
+            data.FIELDS.PropHome ? ' class="active"' : ''
+          }>${BX.message('TWINPX_YADELIVERY_HOME')}*</label>
+      </div>
+      <div class="b-float-label">
+          <input name="PropCorp" id="ydFormCorp" type="text" value="${
+            data.FIELDS.PropCorp
+          }" required="">
+          <label for="ydFormCorp"${
+            data.FIELDS.PropCorp ? ' class="active"' : ''
+          }>${BX.message('TWINPX_YADELIVERY_KORP')}*</label>
+      </div>
+      <div class="b-float-label">
+          <input name="PropApartament" id="ydFormApartament" type="text" value="${
+            data.FIELDS.PropApartament
+          }" required="">
+          <label for="ydFormApartament"${
+            data.FIELDS.PropApartament ? ' class="active"' : ''
+          }>${BX.message('TWINPX_YADELIVERY_AP')}*</label>
+      </div>
+    `;
+  }
+
+  return `
     <div class="yd-popup-error"></div>
     <div class="yd-popup-body">
         <div class="yd-popup-tabs">
             <div class="yd-popup-tabs__nav">
-                <div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">${BX.message('TWINPX_MODAL_GENERAL')}</div>
-				<div class="yd-popup-tabs__nav__item${(!data.BOXES || !data.BOXES.length || !data.PRODUCTS || !data.PRODUCTS.length) ? ' yd-popup-tabs__nav__item--hidden' : ''}" data-tab="package">${BX.message('TWINPX_MODAL_PACKAGE')}</div>
+                <div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">${BX.message(
+                  'TWINPX_MODAL_GENERAL'
+                )}</div>
+				<div class="yd-popup-tabs__nav__item${
+          !data.BOXES ||
+          !data.BOXES.length ||
+          !data.PRODUCTS ||
+          !data.PRODUCTS.length
+            ? ' yd-popup-tabs__nav__item--hidden'
+            : ''
+        }" data-tab="package">${BX.message('TWINPX_MODAL_PACKAGE')}</div>
             </div>
             <div class="yd-popup-tabs__tabs">
                 <form action="" novalidate="">
@@ -2501,21 +2577,57 @@ function createNewDeliveryHtml(data) {
                         <div class="yd-popup-form">
                             <div class="yd-popup-form__col">
                                 <div class="b-float-label">
-                                    <input name="ORDER_ID" id="ydFormOrder" type="number" min="1" value="${data.FIELDS.ORDER_ID}"${data.FIELDS.ORDER_ID ? ' readonly=""' : ''} required="">
-                                    <label for="ydFormOrder"${data.FIELDS.ORDER_ID ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_ORDER')}*</label>
-                                    <div class="yd-popup-form-fillbutton">${BX.message('TWINPX_YADELIVERY_GETDATA')}</div>
+                                    <input name="ORDER_ID" id="ydFormOrder" type="number" min="1" value="${
+                                      data.FIELDS.ORDER_ID
+                                    }"${
+    data.FIELDS.ORDER_ID ? ' readonly=""' : ''
+  } required="">
+                                    <label for="ydFormOrder"${
+                                      data.FIELDS.ORDER_ID
+                                        ? ' class="active"'
+                                        : ''
+                                    }>${BX.message(
+    'TWINPX_YADELIVERY_ORDER'
+  )}*</label>
+                                    <div class="yd-popup-form-fillbutton">${BX.message(
+                                      'TWINPX_YADELIVERY_GETDATA'
+                                    )}</div>
                                 </div>
                                 <div class="b-float-label">
-                                    <input name="PropFio" id="ydFormFio" type="text" value="${data.FIELDS.PropFio}" required="">
-                                    <label for="ydFormFio"${data.FIELDS.PropFio ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_FIO')}*</label>
+                                    <input name="PropFio" id="ydFormFio" type="text" value="${
+                                      data.FIELDS.PropFio
+                                    }" required="">
+                                    <label for="ydFormFio"${
+                                      data.FIELDS.PropFio
+                                        ? ' class="active"'
+                                        : ''
+                                    }>${BX.message(
+    'TWINPX_YADELIVERY_FIO'
+  )}*</label>
                                 </div>
                                 <div class="b-float-label">
-                                    <input name="PropEmail" id="ydFormEmail" type="email" value="${data.FIELDS.PropEmail}">
-                                    <label for="ydFormEmail"${data.FIELDS.PropEmail ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_EMAIL')}</label>
+                                    <input name="PropEmail" id="ydFormEmail" type="email" value="${
+                                      data.FIELDS.PropEmail
+                                    }">
+                                    <label for="ydFormEmail"${
+                                      data.FIELDS.PropEmail
+                                        ? ' class="active"'
+                                        : ''
+                                    }>${BX.message(
+    'TWINPX_YADELIVERY_EMAIL'
+  )}</label>
                                 </div>
                                 <div class="b-float-label">
-                                    <input name="PropPhone" id="ydFormPhone" type="tel" value="${data.FIELDS.PropPhone}" required="">
-                                    <label for="ydFormPhone"${data.FIELDS.PropPhone ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_PHONE')}*</label>
+                                    <input name="PropPhone" id="ydFormPhone" type="tel" value="${
+                                      data.FIELDS.PropPhone
+                                    }" required="">
+                                    <label for="ydFormPhone"${
+                                      data.FIELDS.PropPhone
+                                        ? ' class="active"'
+                                        : ''
+                                    }>${BX.message(
+    'TWINPX_YADELIVERY_PHONE'
+  )}*</label>
                                 </div>
                                 <div class="b-form-control b-float-label">
                                     <select name="PAY_TYPE" id="ydFormPay" required="">
@@ -2523,29 +2635,52 @@ function createNewDeliveryHtml(data) {
                                     </select>
                                 </div>
                                 <div class="b-float-label">
-                                    <input name="PropPrice" id="ydFormPrice" type="number" min="0" value="${data.FIELDS.PropPrice}" required="">
-                                    <label for="ydFormPrice"${data.FIELDS.PropPrice ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_COST')}</label>
+                                    <input name="PropPrice" id="ydFormPrice" type="number" min="0" value="${
+                                      data.FIELDS.PropPrice
+                                    }" required="">
+                                    <label for="ydFormPrice"${
+                                      data.FIELDS.PropPrice
+                                        ? ' class="active"'
+                                        : ''
+                                    }>${BX.message(
+    'TWINPX_YADELIVERY_COST'
+  )}</label>
                                 </div>
                             </div>
                             <div class="yd-popup-form__col">
                                 <div class="b-float-label">
-                                    <input name="PropCity" id="ydFormCity" type="text" value="${data.FIELDS.PropCity}" required="">
-                                    <label for="ydFormCity"${data.FIELDS.PropCity ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_CITY')}*</label>
+                                    <input name="PropCity" id="ydFormCity" type="text" value="${
+                                      data.FIELDS.PropCity
+                                    }" required="">
+                                    <label for="ydFormCity"${
+                                      data.FIELDS.PropCity
+                                        ? ' class="active"'
+                                        : ''
+                                    }>${BX.message(
+    'TWINPX_YADELIVERY_CITY'
+  )}*</label>
                                 </div>
+                                ${addressFields}
                                 <div class="b-float-label">
-                                    <textarea name="PropAddress" id="ydFormAddress" required="" rows="10" cols="10">${data.FIELDS.PropAddress}</textarea>
-                                    <label for="ydFormAddress"${data.FIELDS.PropAddress ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_ADDRESS')}*</label>
-                                </div>
-                                <div class="b-float-label">
-                                    <textarea name="PropComment" id="ydFormComment">${data.FIELDS.PropComment || ''}</textarea>
-                                    <label for="ydFormComment"${data.FIELDS.PropComment ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_COMMENT')}</label>
+                                    <textarea name="PropComment" id="ydFormComment">${
+                                      data.FIELDS.PropComment || ''
+                                    }</textarea>
+                                    <label for="ydFormComment"${
+                                      data.FIELDS.PropComment
+                                        ? ' class="active"'
+                                        : ''
+                                    }>${BX.message(
+    'TWINPX_YADELIVERY_COMMENT'
+  )}</label>
                                 </div>
                             </div>
                         </div>
                     </div>
 					<div class="yd-popup-tabs__tabs__item" data-tab="package">${packageTab}</div>
                     <div class="yd-popup-form__submit">
-                        <button class="twpx-ui-btn" type="submit">${BX.message('TWINPX_YADELIVERY_SUBMIT')}</button>
+                        <button class="twpx-ui-btn" type="submit">${BX.message(
+                          'TWINPX_YADELIVERY_SUBMIT'
+                        )}</button>
                     </div>
                 </form>
             </div>
@@ -2556,31 +2691,46 @@ function createNewDeliveryHtml(data) {
 }
 
 function createNewDeliveryPvzHtml(data) {
-	let fieldsHidden = '';
-	
-	if (data.FIELDS_HIDDEN && typeof data.FIELDS_HIDDEN === 'object') {
-		Object.entries(data.FIELDS_HIDDEN).forEach((entry) => {
-			fieldsHidden += `<input type="hidden" id="${entry[0]}" name="${entry[0]}" value="${entry[1]}">`;
-		});
-	}
-		
-	let paymentOptions = '';
-	
-	if (data.PAYMENT_TYPE && typeof data.PAYMENT_TYPE === 'object') {
-		Object.entries(data.PAYMENT_TYPE).forEach((entry) => {
-			paymentOptions += `<option value="${entry[0]}"${data.FIELDS && data.FIELDS.PAY_TYPE && data.FIELDS.PAY_TYPE===entry[0] ? 'selected="selected"' : ''}>${entry[1]}</option>`;
-		});
-	}
-	
-	const packageTab = packageTabHtml(data);
-	
-	return `
+  let fieldsHidden = '';
+
+  if (data.FIELDS_HIDDEN && typeof data.FIELDS_HIDDEN === 'object') {
+    Object.entries(data.FIELDS_HIDDEN).forEach((entry) => {
+      fieldsHidden += `<input type="hidden" id="${entry[0]}" name="${entry[0]}" value="${entry[1]}">`;
+    });
+  }
+
+  let paymentOptions = '';
+
+  if (data.PAYMENT_TYPE && typeof data.PAYMENT_TYPE === 'object') {
+    Object.entries(data.PAYMENT_TYPE).forEach((entry) => {
+      paymentOptions += `<option value="${entry[0]}"${
+        data.FIELDS && data.FIELDS.PAY_TYPE && data.FIELDS.PAY_TYPE === entry[0]
+          ? 'selected="selected"'
+          : ''
+      }>${entry[1]}</option>`;
+    });
+  }
+
+  const packageTab = packageTabHtml(data);
+
+  return `
 	<div class="yd-popup-error"></div>
 	<div class="yd-popup-body">
 		<div class="yd-popup-tabs">
 			<div class="yd-popup-tabs__nav">
-				<div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">${BX.message('TWINPX_MODAL_GENERAL')}</div>
-                <div class="yd-popup-tabs__nav__item${(!data.BOXES || !data.BOXES.length || !data.PRODUCTS || !data.PRODUCTS.length) ? ' yd-popup-tabs__nav__item--hidden' : ''}" data-tab="package">${BX.message('TWINPX_MODAL_PACKAGE')}</div>
+				<div class="yd-popup-tabs__nav__item yd-popup-tabs__nav__item--active" data-tab="general">${BX.message(
+          'TWINPX_MODAL_GENERAL'
+        )}</div>
+                <div class="yd-popup-tabs__nav__item${
+                  !data.BOXES ||
+                  !data.BOXES.length ||
+                  !data.PRODUCTS ||
+                  !data.PRODUCTS.length
+                    ? ' yd-popup-tabs__nav__item--hidden'
+                    : ''
+                }" data-tab="package">${BX.message(
+    'TWINPX_MODAL_PACKAGE'
+  )}</div>
 			</div>
 			<div class="yd-popup-tabs__tabs">
 				<form action="" novalidate="">
@@ -2589,21 +2739,39 @@ function createNewDeliveryPvzHtml(data) {
 						<div class="yd-popup-form">
 							<div class="yd-popup-form__col">
 								<div class="b-float-label">
-									<input name="ORDER_ID" id="ydFormPvzOrder" type="number" value="${data.FIELDS.ORDER_ID}"${data.FIELDS.ORDER_ID ? ' readonly=""' : ''} required="">
-									<label for="ydFormPvzOrder"${data.FIELDS.ORDER_ID ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_ORDER')}*</label>
-									<div class="yd-popup-form-fillbutton">${BX.message('TWINPX_YADELIVERY_GETDATA')}</div>
+									<input name="ORDER_ID" id="ydFormPvzOrder" type="number" value="${
+                    data.FIELDS.ORDER_ID
+                  }"${data.FIELDS.ORDER_ID ? ' readonly=""' : ''} required="">
+									<label for="ydFormPvzOrder"${
+                    data.FIELDS.ORDER_ID ? ' class="active"' : ''
+                  }>${BX.message('TWINPX_YADELIVERY_ORDER')}*</label>
+									<div class="yd-popup-form-fillbutton">${BX.message(
+                    'TWINPX_YADELIVERY_GETDATA'
+                  )}</div>
 								</div>
 								<div class="b-float-label">
-									<input name="PropFio" id="ydFormPvzFio" type="text" value="${data.FIELDS.PropFio}" required="">
-									<label for="ydFormPvzFio"${data.FIELDS.PropFio ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_FIO')}*</label>
+									<input name="PropFio" id="ydFormPvzFio" type="text" value="${
+                    data.FIELDS.PropFio
+                  }" required="">
+									<label for="ydFormPvzFio"${
+                    data.FIELDS.PropFio ? ' class="active"' : ''
+                  }>${BX.message('TWINPX_YADELIVERY_FIO')}*</label>
 								</div>
 								<div class="b-float-label">
-									<input name="PropEmail" id="ydFormPvzEmail" type="email" value="${data.FIELDS.PropEmail}">
-									<label for="ydFormPvzEmail"${data.FIELDS.PropEmail ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_EMAIL')}</label>
+									<input name="PropEmail" id="ydFormPvzEmail" type="email" value="${
+                    data.FIELDS.PropEmail
+                  }">
+									<label for="ydFormPvzEmail"${
+                    data.FIELDS.PropEmail ? ' class="active"' : ''
+                  }>${BX.message('TWINPX_YADELIVERY_EMAIL')}</label>
 								</div>
 								<div class="b-float-label">
-									<input name="PropPhone" id="ydFormPvzPhone" type="tel" value="${data.FIELDS.PropPhone}" required="">
-									<label for="ydFormPvzPhone"${data.FIELDS.PropPhone ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_PHONE')}*</label>
+									<input name="PropPhone" id="ydFormPvzPhone" type="tel" value="${
+                    data.FIELDS.PropPhone
+                  }" required="">
+									<label for="ydFormPvzPhone"${
+                    data.FIELDS.PropPhone ? ' class="active"' : ''
+                  }>${BX.message('TWINPX_YADELIVERY_PHONE')}*</label>
 								</div>
 								<div class="b-form-control b-float-label">
 									<select name="PAY_TYPE" id="ydFormPay" required="">
@@ -2611,21 +2779,31 @@ function createNewDeliveryPvzHtml(data) {
 									</select>
 								</div>
 								<div class="b-float-label">
-									<input name="PropPrice" id="ydFormPrice" type="number" min="0" value="${data.FIELDS.PropPrice}" required="">
-									<label for="ydFormPrice"${data.FIELDS.PropPrice ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_COST')}</label>
+									<input name="PropPrice" id="ydFormPrice" type="number" min="0" value="${
+                    data.FIELDS.PropPrice
+                  }" required="">
+									<label for="ydFormPrice"${
+                    data.FIELDS.PropPrice ? ' class="active"' : ''
+                  }>${BX.message('TWINPX_YADELIVERY_COST')}</label>
 								</div>
 							</div>
 							<div class="yd-popup-form__col">
 								<div class="b-float-label">
-									<input name="PropCity" id="ydFormPvzCity" type="text" value="${data.FIELDS.PropCity}" required="">
-									<label for="ydFormPvzCity"${data.FIELDS.PropCity ? ' class="active"' : ''}>${BX.message('TWINPX_YADELIVERY_CITY')}*</label>
+									<input name="PropCity" id="ydFormPvzCity" type="text" value="${
+                    data.FIELDS.PropCity
+                  }" required="">
+									<label for="ydFormPvzCity"${
+                    data.FIELDS.PropCity ? ' class="active"' : ''
+                  }>${BX.message('TWINPX_YADELIVERY_CITY')}*</label>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="yd-popup-tabs__tabs__item" data-tab="package">${packageTab}</div>
 					<div class="yd-popup-form__submit">
-						<button class="twpx-ui-btn" type="submit">${BX.message('TWINPX_YADELIVERY_SUBMIT')}</button>
+						<button class="twpx-ui-btn" type="submit">${BX.message(
+              'TWINPX_YADELIVERY_SUBMIT'
+            )}</button>
 					</div>
 				</form>
 				<div class="yd-popup-map-container"></div>
