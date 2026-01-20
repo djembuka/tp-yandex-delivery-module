@@ -2219,14 +2219,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
           //send to the server
         (async () => {
-          //get offices
-          let formData = new FormData();
-          formData.set('action', 'getPoints');
-          formData.set(
-            'fields',
-            `lat-from=${bounds[0][0]}&lat-to=${bounds[1][0]}&lon-from=${bounds[0][1]}&lon-to=${bounds[1][1]}&payment=${payment}`
-          );
-
           let controller = new AbortController();
           let response;
 
@@ -2239,9 +2231,9 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
           try {
             response = await fetch(window.twinpxYadeliveryFetchURL, {
               method: 'POST',
-              body: formData,
               signal: controller.signal,
             });
+            
             let result = await response.json();
 
             //remove preloader

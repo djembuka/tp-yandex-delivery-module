@@ -602,10 +602,6 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
         map,
         objectManager,
         bounds,
-        firstGeoObjectCoords,
-        regionName,
-        pvzPopup,
-        centerCoords,
         pointsArray,
         pointsNodesArray = {},
         newBounds = [],
@@ -784,22 +780,15 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
         //ymaps
         if (window.ymaps && window.ymaps.ready) {
           ymaps.ready(() => {
-            //geo code
-            const myGeocoder = ymaps.geocode(regionName, {
-              results: 1,
-            });
+            const mockCoords = [55, 37];
 
-            myGeocoder.then((res) => {
-              // first result, its coords and bounds
-              let firstGeoObject = res.geoObjects.get(0);
-              firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-              bounds = firstGeoObject.properties.get('boundedBy');
+              bounds = [mockCoords, mockCoords];
               newBounds = bounds;
 
               map = new ymaps.Map(
                 'ydPopupMap',
                 {
-                  center: firstGeoObjectCoords,
+                  center: mockCoords,
                   zoom: 9,
                   controls: ['searchControl', 'zoomControl'],
                 },
@@ -1044,7 +1033,7 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
                   pointsError();
                 }
               })();
-            });
+            
           });
         }
 
@@ -2969,8 +2958,6 @@ function setPlatformId(inputId) {
     map,
     objectManager,
     bounds,
-    firstGeoObjectCoords,
-    regionName = 'Moscow',
     pointsArray,
     pointsNodesArray = {},
     newBounds = [],
@@ -3023,229 +3010,217 @@ function setPlatformId(inputId) {
     //ymaps
     if (window.ymaps && window.ymaps.ready) {
       ymaps.ready(() => {
-        //geo code
-        const myGeocoder = ymaps.geocode(regionName, {
-          results: 1,
-        });
+        const mockCoords = [55, 37];
 
-        myGeocoder.then((res) => {
-          // first result, its coords and bounds
-          let firstGeoObject = res.geoObjects.get(0);
-          firstGeoObjectCoords = firstGeoObject.geometry.getCoordinates();
-          bounds = firstGeoObject.properties.get('boundedBy');
-          newBounds = bounds;
+        bounds = [mockCoords, mockCoords];
+        newBounds = bounds;
 
-          map = new ymaps.Map(
-            'ydPopupMap',
-            {
-              center: firstGeoObjectCoords,
-              zoom: 9,
-              controls: ['searchControl', 'zoomControl'],
-            },
-            {
-              suppressMapOpenBlock: true,
-            }
+        map = new ymaps.Map(
+          'ydPopupMap',
+          {
+            center: mockCoords,
+            zoom: 9,
+            controls: ['searchControl', 'zoomControl'],
+          },
+          {
+            suppressMapOpenBlock: true,
+          }
+        );
+
+        let customBalloonContentLayout =
+          ymaps.templateLayoutFactory.createClass(
+            `<div class="yd-popup-balloon-content">${BX.message(
+              'TWINPX_JS_MULTIPLE_POINTS'
+            )}</div>`
           );
 
-          let customBalloonContentLayout =
-            ymaps.templateLayoutFactory.createClass(
-              `<div class="yd-popup-balloon-content">${BX.message(
-                'TWINPX_JS_MULTIPLE_POINTS'
-              )}</div>`
-            );
+        objectManager = new ymaps.ObjectManager({
+          clusterize: true,
+          clusterBalloonContentLayout: customBalloonContentLayout,
+        });
 
-          objectManager = new ymaps.ObjectManager({
-            clusterize: true,
-            clusterBalloonContentLayout: customBalloonContentLayout,
+        objectManager.objects.options.set('iconLayout', 'default#image');
+        objectManager.objects.options.set(
+          'iconImageHref',
+          '/bitrix/images/twinpx.yadelivery/yandexPoint.svg'
+        );
+        objectManager.objects.options.set('iconImageSize', [32, 42]);
+        objectManager.objects.options.set('iconImageOffset', [-16, -42]);
+        objectManager.clusters.options.set(
+          'preset',
+          'islands#blackClusterIcons'
+        );
+        objectManager.objects.events.add(['click'], onObjectEvent);
+        //objectManager.clusters.events.add(['click'], onClusterEvent);
+
+        let firstBound = true;
+
+        if (map) {
+          //add object manager
+          map.geoObjects.add(objectManager);
+
+          //remove preloader
+          elemLoader(document.querySelector('#ydPopupMap'), false);
+          //map bounds
+          map.setBounds(bounds, {
+            checkZoomRange: true,
+          });
+          //events
+          map.events.add('boundschange', onBoundsChange);
+        }
+
+        function onBoundsChange(e) {
+          newBounds = e ? e.get('newBounds') : newBounds;
+
+          if (firstBound) {
+            firstBound = false;
+            return;
+          }
+
+          //wrapper sorted mode
+          ydPopupWrapper.classList.add('yd-popup-list-wrapper--sorted');
+
+          //clear sorted pvz
+          for (let key in pointsNodesArray) {
+            if (pointsNodesArray[key]['sorted'] === true) {
+              pointsNodesArray[key]['node'].classList.remove(
+                'yd-popup-list__item--sorted'
+              );
+            }
+          }
+
+          //items array
+          let arr = pointsArray.filter((point) => {
+            return (
+              point.coords[0] > newBounds[0][0] &&
+              point.coords[0] < newBounds[1][0] &&
+              point.coords[1] > newBounds[0][1] &&
+              point.coords[1] < newBounds[1][1]
+            );
           });
 
-          objectManager.objects.options.set('iconLayout', 'default#image');
-          objectManager.objects.options.set(
-            'iconImageHref',
-            '/bitrix/images/twinpx.yadelivery/yandexPoint.svg'
-          );
-          objectManager.objects.options.set('iconImageSize', [32, 42]);
-          objectManager.objects.options.set('iconImageOffset', [-16, -42]);
-          objectManager.clusters.options.set(
-            'preset',
-            'islands#blackClusterIcons'
-          );
-          objectManager.objects.events.add(['click'], onObjectEvent);
-          //objectManager.clusters.events.add(['click'], onClusterEvent);
+          //set items sorted
+          arr.forEach((point) => {
+            let sortedItem = pointsNodesArray[point.id]['node'];
+            pointsNodesArray[point.id]['sorted'] = true;
+            if (sortedItem) {
+              sortedItem.classList.add('yd-popup-list__item--sorted');
+            }
+          });
+        }
 
-          let firstBound = true;
+        //send to the server
+        (async () => {
+          let controller = new AbortController();
+          let response;
 
-          if (map) {
-            //add object manager
-            map.geoObjects.add(objectManager);
+          setTimeout(() => {
+            if (!response) {
+              controller.abort();
+            }
+          }, 20000);
+
+          try {
+            let response = await fetch(window.twinpxYadeliveryFetchURL, {
+              method: 'POST',
+            });
+            let result = await response.json();
 
             //remove preloader
-            elemLoader(document.querySelector('#ydPopupMap'), false);
-            //map bounds
-            map.setBounds(bounds, {
-              checkZoomRange: true,
-            });
-            //events
-            map.events.add('boundschange', onBoundsChange);
-          }
+            elemLoader(ydPopupWrapper, false);
 
-          function onBoundsChange(e) {
-            newBounds = e ? e.get('newBounds') : newBounds;
+            if (result && result.STATUS === 'Y' && result.POINTS) {
+              //fill pointsArray
+              pointsArray = result.POINTS;
 
-            if (firstBound) {
-              firstBound = false;
-              return;
-            }
+              //list
+              let pointsFlag,
+                objectsArray = [],
+                featureOptions = {};
 
-            //wrapper sorted mode
-            ydPopupWrapper.classList.add('yd-popup-list-wrapper--sorted');
+              result.POINTS.forEach(
+                ({ id, title, schedule, address, coords }) => {
+                  if (!id) return;
 
-            //clear sorted pvz
-            for (let key in pointsNodesArray) {
-              if (pointsNodesArray[key]['sorted'] === true) {
-                pointsNodesArray[key]['node'].classList.remove(
-                  'yd-popup-list__item--sorted'
-                );
-              }
-            }
+                  pointsFlag = true;
 
-            //items array
-            let arr = pointsArray.filter((point) => {
-              return (
-                point.coords[0] > newBounds[0][0] &&
-                point.coords[0] < newBounds[1][0] &&
-                point.coords[1] > newBounds[0][1] &&
-                point.coords[1] < newBounds[1][1]
-              );
-            });
-
-            //set items sorted
-            arr.forEach((point) => {
-              let sortedItem = pointsNodesArray[point.id]['node'];
-              pointsNodesArray[point.id]['sorted'] = true;
-              if (sortedItem) {
-                sortedItem.classList.add('yd-popup-list__item--sorted');
-              }
-            });
-          }
-
-          //send to the server
-          (async () => {
-            //get offices
-            let formData = new FormData();
-            formData.set('action', 'getReception');
-
-            let controller = new AbortController();
-            let response;
-
-            setTimeout(() => {
-              if (!response) {
-                controller.abort();
-              }
-            }, 20000);
-
-            try {
-              let response = await fetch(window.twinpxYadeliveryFetchURL, {
-                method: 'POST',
-                body: formData,
-              });
-              let result = await response.json();
-
-              //remove preloader
-              elemLoader(ydPopupWrapper, false);
-
-              if (result && result.STATUS === 'Y' && result.POINTS) {
-                //fill pointsArray
-                pointsArray = result.POINTS;
-
-                //list
-                let pointsFlag,
-                  objectsArray = [],
                   featureOptions = {};
 
-                result.POINTS.forEach(
-                  ({ id, title, schedule, address, coords }) => {
-                    if (!id) return;
+                  //placemark
+                  objectsArray.push({
+                    type: 'Feature',
+                    id: id,
+                    geometry: {
+                      type: 'Point',
+                      coordinates: coords,
+                    },
+                    options: featureOptions,
+                  });
 
-                    pointsFlag = true;
+                  //list
+                  let item = document.createElement('div');
+                  item.className = 'yd-popup-list__item';
+                  item.setAttribute('data-id', id);
 
-                    featureOptions = {};
+                  item.innerHTML = `
+                      <div class="yd-popup-list__title">${title}</div>
+                      <div class="yd-popup-list__text">
+                        ${schedule}<br>
+                        ${address}
+                      </div>
+                      <div class="twpx-ui-btn">${BX.message(
+                        'TWINPX_JS_SELECT'
+                      )}</div>
+                    `;
 
-                    //placemark
-                    objectsArray.push({
-                      type: 'Feature',
-                      id: id,
-                      geometry: {
-                        type: 'Point',
-                        coordinates: coords,
-                      },
-                      options: featureOptions,
-                    });
+                  item.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('twpx-ui-btn')) {
+                      //set id value
+                      document.getElementById(inputId).value = id;
+                      window.ydSetPlatformrPvz.destroy();
+                      pageScroll(true);
+                    } else {
+                      clickPlacemark(map, coords);
+                    }
+                  });
 
-                    //list
-                    let item = document.createElement('div');
-                    item.className = 'yd-popup-list__item';
-                    item.setAttribute('data-id', id);
+                  ydPopupWrapper.appendChild(item);
 
-                    item.innerHTML = `
-                        <div class="yd-popup-list__title">${title}</div>
-                        <div class="yd-popup-list__text">
-                          ${schedule}<br>
-                          ${address}
-                        </div>
-                        <div class="twpx-ui-btn">${BX.message(
-                          'TWINPX_JS_SELECT'
-                        )}</div>
-                      `;
-
-                    item.addEventListener('click', (e) => {
-                      if (e.target.classList.contains('twpx-ui-btn')) {
-                        //set id value
-                        document.getElementById(inputId).value = id;
-                        window.ydSetPlatformrPvz.destroy();
-                        pageScroll(true);
-                      } else {
-                        clickPlacemark(map, coords);
-                      }
-                    });
-
-                    ydPopupWrapper.appendChild(item);
-
-                    //push to nodes array
-                    pointsNodesArray[id] = {
-                      node: item,
-                      sorted: false,
-                    };
-                  }
-                );
-
-                objectManager.add(objectsArray);
-
-                if (!pointsFlag) {
-                  pointsError();
+                  //push to nodes array
+                  pointsNodesArray[id] = {
+                    node: item,
+                    sorted: false,
+                  };
                 }
+              );
 
-                if (
-                  ydPopupWrapper.classList.contains(
-                    'yd-popup-list-wrapper--sorted'
-                  )
-                ) {
-                  //if the map was moved while offices were loading
-                  onBoundsChange();
-                }
+              objectManager.add(objectsArray);
 
-                //map bounds
-                if (map) {
-                  centerCoords = map.getCenter();
-                }
-              } else {
-                pointsError(result.ERRORS);
+              if (!pointsFlag) {
+                pointsError();
               }
-            } catch (err) {
-              pointsError();
+
+              if (
+                ydPopupWrapper.classList.contains(
+                  'yd-popup-list-wrapper--sorted'
+                )
+              ) {
+                //if the map was moved while offices were loading
+                onBoundsChange();
+              }
+
+              //map bounds
+              if (map) {
+                centerCoords = map.getCenter();
+              }
+            } else {
+              pointsError(result.ERRORS);
             }
-          })();
-        });
+          } catch (err) {
+            pointsError();
+          }
+        })();
+
       });
     }
   }
