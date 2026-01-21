@@ -3060,7 +3060,7 @@ function setPlatformId(inputId) {
           map.geoObjects.add(objectManager);
 
           //remove preloader
-          elemLoader(document.querySelector('#ydPopupMap'), false);
+          // elemLoader(document.querySelector('#ydPopupMap'), false);
           //map bounds
           map.setBounds(bounds, {
             checkZoomRange: true,
@@ -3226,9 +3226,7 @@ function setPlatformId(inputId) {
   }
 
   function elemLoader(elem, flag) {
-    flag
-      ? elem.classList.add('load-circle')
-      : elem.classList.remove('load-circle');
+    elem.classList.toggle('load-circle', flag);
   }
 
   function pointsError(error) {
