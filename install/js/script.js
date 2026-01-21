@@ -676,9 +676,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
       });
   }
 
-  errorMessageElem = twpxYadeliveryElem.querySelector(
-    '.yd-popup-error-message'
-  );
+  errorMessageElem = twpxYadeliveryElem.querySelector('.yd-popup-error-message');
   showOfferElem = twpxYadeliveryElem.querySelector('#showOffer');
   errorFormElem = twpxYadeliveryElem.querySelector('.yd-popup-error-form');
 
