@@ -2219,6 +2219,12 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         (async () => {
           let controller = new AbortController();
           let response;
+          let formData = new FormData();
+            formData.set('action', 'getPoints');
+            formData.set(
+              'fields',
+              `payment=${payment}`
+            );
 
           setTimeout(() => {
             if (!response) {
@@ -2229,6 +2235,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
           try {
             response = await fetch(window.twinpxYadeliveryFetchURL, {
               method: 'POST',
+              body: formData,
               signal: controller.signal,
             });
 
