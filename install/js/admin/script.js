@@ -829,8 +829,6 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
                 //add object manager
                 map.geoObjects.add(objectManager);
 
-                //remove preloader
-                elemLoader(document.querySelector('#ydPopupMap'), false);
                 //map bounds
                 map.setBounds(bounds, {
                   checkZoomRange: true,
@@ -905,7 +903,9 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
                   });
                   let result = await response.json();
 
+                  
                   //remove preloader
+                  elemLoader(document.querySelector('#ydPopupMap'), false);
                   elemLoader(ydPopupWrapper, false);
 
                   if (result && result.STATUS === 'Y' && result.POINTS) {
@@ -3059,8 +3059,6 @@ function setPlatformId(inputId) {
           //add object manager
           map.geoObjects.add(objectManager);
 
-          //remove preloader
-          // elemLoader(document.querySelector('#ydPopupMap'), false);
           //map bounds
           map.setBounds(bounds, {
             checkZoomRange: true,
@@ -3127,6 +3125,7 @@ function setPlatformId(inputId) {
             let result = await response.json();
 
             //remove preloader
+            elemLoader(document.querySelector('#ydPopupMap'), false);
             elemLoader(ydPopupWrapper, false);
 
             if (result && result.STATUS === 'Y' && result.POINTS) {

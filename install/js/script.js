@@ -2163,8 +2163,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         if (map) {
           //add object manager
           map.geoObjects.add(objectManager);
-          //remove preloader
-          elemLoader(document.querySelector('#ydPopupMap'), false);
           //map bounds
           map.setBounds(bounds, {
             checkZoomRange: true,
@@ -2233,10 +2231,11 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
               method: 'POST',
               signal: controller.signal,
             });
-            
+
             let result = await response.json();
 
             //remove preloader
+            elemLoader(document.querySelector('#ydPopupMap'), false);
             elemLoader(ydPopupWrapper, false);
 
             if (result && typeof result === 'object') {
