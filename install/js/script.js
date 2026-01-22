@@ -2221,10 +2221,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
           let response;
           let formData = new FormData();
             formData.set('action', 'getPoints');
-            formData.set(
-              'fields',
-              `payment=${payment}`
-            );
+            formData.set('fields', fields);
 
           setTimeout(() => {
             if (!response) {
