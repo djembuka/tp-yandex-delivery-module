@@ -3023,7 +3023,6 @@ function setPlatformId(inputId) {
     //ymaps
     if (window.ymaps && window.ymaps.ready) {
       ymaps.ready(() => {
-        //geo code
         const myGeocoder = ymaps.geocode(regionName, {
           results: 1,
         });
