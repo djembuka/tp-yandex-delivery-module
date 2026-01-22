@@ -1326,39 +1326,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         .classList.add('yd-popup--error-message');
     }
 
-    //send request to get region name
-    let formData = new FormData(),
-      controller = new AbortController(),
-      response,
-      result;
-
-    //fetch request
-    formData.set('action', 'getRegion');
-    formData.set('fields', fields);
-
-    setTimeout(() => {
-      if (!response) {
-        controller.abort();
-      }
-    }, fetchTimeout);
-
-    try {
-      response = await fetch(window.twinpxYadeliveryFetchURL, {
-        method: 'POST',
-        body: formData,
-        signal: controller.signal,
-      });
-
-      result = await response.json();
-
-      if (result && result.STATUS === 'Y') {
-        regionName = result.REGION;
-        payment = result.PAYMENT;
-        onPopupShow(result.ERRORS);
-      }
-    } catch (err) {
-      throw err;
-    }
+    onPopupShow();
 
     //custom callback
     if (window.twinpxYadelivery && window.twinpxYadelivery.onPvzPopupShow) {
