@@ -1170,7 +1170,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     bounds,
     firstGeoObjectCoords,
     topBtns,
-    regionName,
     payment,
     pvzPopup,
     centerCoords,
@@ -2058,9 +2057,8 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     //ymaps
     if (window.ymaps && window.ymaps.ready) {
       ymaps.ready(() => {
-        //let regionName = prompt('city'); use it if region change is needed
         //check if region exists
-        if (!regionName && errorMessage) {
+        if (errorMessage) {
           elemLoader(document.querySelector('#ydPopupMap'), false);
           elemLoader(ydPopupWrapper, false);
 
