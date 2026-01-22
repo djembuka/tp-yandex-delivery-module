@@ -1170,7 +1170,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     bounds,
     firstGeoObjectCoords,
     topBtns,
-    payment,
     pvzPopup,
     centerCoords,
     pointsArray,
