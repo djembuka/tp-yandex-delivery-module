@@ -1347,6 +1347,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
   }
 
   function pointsError(message) {
+    console.log(message)
     ydPopupWrapper.innerHTML = `<div class="yd-popup-error__message"><i style="background-image: url(/bitrix/images/twinpx.yadelivery/danger.svg)"></i>${
       message || BX.message('TWINPX_JS_EMPTY_LIST')
     }</div>`;
@@ -2207,7 +2208,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
             if (result && typeof result === 'object') {
               if (result.STATUS === 'Y') {
-                if (result.ERRORS) {
+                if (result.ERRORS && Array.isArray(result.ERRORS) && result.ERRORS.length) {
                   pointsError(result.ERRORS);
                 } else {
                   if (result.POINTS) {
