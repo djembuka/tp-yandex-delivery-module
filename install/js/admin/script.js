@@ -2,12 +2,12 @@ window.twinpxYadeliveryFetchURL =
   window.twinpxYadeliveryFetchURL ||
   '/bitrix/tools/twinpx.yadelivery/admin/ajax.php';
 
-//window.twinpxYadeliveryYmapsAPI = false;
-window.twinpxYadeliveryYmapsAPI =
-  window.twinpxYadeliveryYmapsAPI ||
-  window.twinpxYadeliveryYmapsAPI === undefined
-    ? true
-    : false;
+window.twinpxYadeliveryYmapsAPI = false;
+// window.twinpxYadeliveryYmapsAPI =
+//   window.twinpxYadeliveryYmapsAPI ||
+//   window.twinpxYadeliveryYmapsAPI === undefined
+//     ? true
+//     : false;
 
 window.newDeliveryPopupOnload = function () {
   const ydContent = document.querySelector('#newDelivery .yd-popup-content'),
@@ -3019,6 +3019,17 @@ function setPlatformId(inputId) {
 
   function onPopupShow() {
     pointsArray = [];
+
+    //show error if there is no api ymaps key
+    if (!window.twinpxYadeliveryYmapsAPI) {
+      document.querySelector('#setPlatformContentPvz').classList.remove('load-circle');
+      document.querySelector('#setPlatformContentPvz').innerHTML = `<div class="yd-popup-error__message">
+        <i style="background-image: url(/bitrix/images/twinpx.yadelivery/danger.svg)"></i>
+        ${BX.message('TWINPX_JS_NO_YMAP_KEY')}
+      </div>`;
+
+      return;
+    }
 
     //ymaps
     if (window.ymaps && window.ymaps.ready) {
