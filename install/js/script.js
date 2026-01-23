@@ -1302,6 +1302,13 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
   pvzPopup.show();
 
+  
+  function showApiKeyError() {
+    document
+      .querySelector('#ydPopup')
+      .classList.add('yd-popup--error-message');
+  }
+
   async function pvzPopupShow() {
     pageScroll(false);
 
@@ -1319,9 +1326,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     //show error if there is no api ymaps key
     if (!window.twinpxYadeliveryYmapsAPI) {
-      document
-        .querySelector('#ydPopup')
-        .classList.add('yd-popup--error-message');
+      showApiKeyError();
     }
 
     //send request to get region name
@@ -2333,6 +2338,10 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
               pointsError();
             }
           })();
+        },
+        (err) => {
+          showApiKeyError();
+          pvzPopup.adjustPosition();
         });
       });
     }
