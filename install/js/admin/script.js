@@ -2,7 +2,6 @@ window.twinpxYadeliveryFetchURL =
   window.twinpxYadeliveryFetchURL ||
   '/bitrix/tools/twinpx.yadelivery/admin/ajax.php';
 
-//window.twinpxYadeliveryYmapsAPI = false;
 window.twinpxYadeliveryYmapsAPI =
   window.twinpxYadeliveryYmapsAPI ||
   window.twinpxYadeliveryYmapsAPI === undefined
@@ -437,6 +436,16 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
           .classList.add('yd-popup-tabs__tabs__item--active');
       });
     });
+  }
+
+  function showApiKeyError(el, message) {
+    el.classList.remove('load-circle');
+    el.innerHTML = `
+      <div class="yd-popup-error__message">
+        <i style="background-image: url(/bitrix/images/twinpx.yadelivery/danger.svg)"></i>
+        ${message}
+      </div>
+    `;
   }
 
   //float label input
@@ -1044,6 +1053,10 @@ window.newDeliveryPvzPopupOnload = function (orderId, pvzId, chosenAddress) {
                   pointsError();
                 }
               })();
+            },
+            (err) => {
+              showApiKeyError(document.querySelector('#newDeliveryContentPvz'), BX.message('TWINPX_JS_INVALID_YMAP_KEY'));
+              window.ydConfirmerPvz.adjustPosition();
             });
           });
         }
@@ -2434,6 +2447,16 @@ function newDeliveryPvz(orderId, pvzId, chosenAddress) {
       : elem.classList.remove('load-circle');
   }
 
+  function showApiKeyError(message) {
+    document.querySelector('#newDeliveryContentPvz').classList.remove('load-circle');
+    document.querySelector('#newDeliveryContentPvz').innerHTML = `
+      <div class="yd-popup-error__message">
+        <i style="background-image: url(/bitrix/images/twinpx.yadelivery/danger.svg)"></i>
+        ${message}
+      </div>
+    `;
+  }
+
   window.ydConfirmerPvz = new BX.PopupWindow('newDeliveryPvz', null, {
     content:
       '<div id="newDeliveryContentPvz" class="yd-popup-content load-circle"></div>',
@@ -2447,16 +2470,7 @@ function newDeliveryPvz(orderId, pvzId, chosenAddress) {
 
         //show error if there is no api ymaps key
         if (!window.twinpxYadeliveryYmapsAPI) {
-          document
-            .querySelector('#newDeliveryContentPvz')
-            .classList.remove('load-circle');
-          document.querySelector(
-            '#newDeliveryContentPvz'
-          ).innerHTML = `<div class="yd-popup-error__message">
-            <i style="background-image: url(/bitrix/images/twinpx.yadelivery/danger.svg)"></i>
-            ${BX.message('TWINPX_JS_NO_YMAP_KEY')}
-          </div>`;
-
+          showApiKeyError(BX.message('TWINPX_JS_NO_YMAP_KEY'));
           return;
         }
 
@@ -3017,13 +3031,27 @@ function setPlatformId(inputId) {
     window.ydSetPlatformrPvz.show();
   }
 
+  function showApiKeyError(el, message) {
+    el.classList.remove('load-circle');
+    el.innerHTML = `
+      <div class="yd-popup-error__message">
+        <i style="background-image: url(/bitrix/images/twinpx.yadelivery/danger.svg)"></i>
+        ${message}
+      </div>
+    `;
+  }
+
   function onPopupShow() {
     pointsArray = [];
+
+    if (!window.twinpxYadeliveryYmapsAPI) {
+      showApiKeyError(document.querySelector('#setPlatformContentPvz'), BX.message('TWINPX_JS_NO_YMAP_KEY'));
+      return;
+    }
 
     //ymaps
     if (window.ymaps && window.ymaps.ready) {
       ymaps.ready(() => {
-        //geo code
         const myGeocoder = ymaps.geocode(regionName, {
           results: 1,
         });
@@ -3245,6 +3273,10 @@ function setPlatformId(inputId) {
               pointsError();
             }
           })();
+        },
+        (err) => {
+          showApiKeyError(document.querySelector('#setPlatformContentPvz'), BX.message('TWINPX_JS_INVALID_YMAP_KEY'));
+          window.ydSetPlatformrPvz.adjustPosition();
         });
       });
     }
