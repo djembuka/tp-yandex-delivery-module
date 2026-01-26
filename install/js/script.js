@@ -1,3 +1,20 @@
+const CONFIG = {
+  // API и сетевые настройки
+  api: {
+    url: '/bitrix/tools/twinpx.yadelivery/ajax.php',
+    timeout: 20000, // fetchTimeout
+    actions: {
+      reset: 'reset',
+      getRegion: 'getRegion',
+      getPoints: 'getPoints',
+      pvzOffer: 'pvzOffer',
+      getOffer: 'getOffer',
+      setOfferPrice: 'setOfferPrice',
+      setPvzId: 'setPvzId'
+    }
+  },
+}
+
 //input tel in popups
 class InputTelMaskGetSetValue {
   constructor(input) {
@@ -175,7 +192,7 @@ class InputTelMaskGetSetValue {
 })();
 
 window.twinpxYadeliveryFetchURL =
-  window.twinpxYadeliveryFetchURL || '/bitrix/tools/twinpx.yadelivery/ajax.php';
+  window.twinpxYadeliveryFetchURL || CONFIG.api.url;
 
 //window.twinpxYadeliveryYmapsAPI = false;
 window.twinpxYadeliveryYmapsAPI =
@@ -512,7 +529,7 @@ window.addEventListener('DOMContentLoaded', () => {
   //reset price when focusout happened
   async function resetPrice() {
     let formData = new FormData();
-    formData.set('action', 'reset');
+    formData.set('action', CONFIG.api.actions.reset);
 
     await fetch(window.twinpxYadeliveryFetchURL, {
       method: 'POST',
@@ -543,7 +560,7 @@ async function sendOffer(jsonStr) {
   let formData = new FormData(),
     response;
 
-  formData.set('action', 'setOfferPrice');
+  formData.set('action', CONFIG.api.actions.setOfferPrice);
   formData.set('fields', jsonStr);
 
   response = await fetch(window.twinpxYadeliveryFetchURL, {
@@ -569,7 +586,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
     twpxYadeliveryElem = document.createElement('div'),
     showOfferElem,
     courierPopup,
-    fetchTimeout = 20000;
+    fetchTimeout = CONFIG.api.timeout;
 
   twpxYadeliveryElem.id = 'twpx_yadelivery';
   twpxYadeliveryElem.classList.add('twpx_yadelivery');
@@ -992,7 +1009,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
       html = '';
 
     //fetch request
-    formData.set('action', 'getOffer');
+    formData.set('action', CONFIG.api.actions.getOffer);
     formData.set('fields', fields);
 
     if (props) {
@@ -1175,7 +1192,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     pointsArray,
     pointsNodesArray = {},
     newBounds = [],
-    fetchTimeout = 20000,
+    fetchTimeout = CONFIG.api.timeout,
     container = `<div class="yd-popup-container yd-popup--map ${
       yadeliveryMode === 'simple' ? 'yd-popup--simple' : ''
     }">
@@ -1336,7 +1353,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
       result;
 
     //fetch request
-    formData.set('action', 'getRegion');
+    formData.set('action', CONFIG.api.actions.getRegion);
     formData.set('fields', fields);
 
     setTimeout(() => {
@@ -1470,7 +1487,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
   async function sendId(json, address) {
     //get offers
     let formData = new FormData();
-    formData.set('action', 'setPvzId');
+    formData.set('action', CONFIG.api.actions.setPvzId);
     formData.set('json', json);
 
     let controller = new AbortController();
@@ -1650,7 +1667,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     //get offers
     let formData = new FormData();
-    formData.set('action', 'pvzOffer');
+    formData.set('action', CONFIG.api.actions.pvzOffer);
     formData.set(
       'fields',
       `${fields}&id=${jsonObject.id}&address=${jsonObject.address}&title=${jsonObject.title}`
@@ -2234,7 +2251,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
           (async () => {
             //get offices
             let formData = new FormData();
-            formData.set('action', 'getPoints');
+            formData.set('action', CONFIG.api.actions.getPoints);
             formData.set(
               'fields',
               `lat-from=${bounds[0][0]}&lat-to=${bounds[1][0]}&lon-from=${bounds[0][1]}&lon-to=${bounds[1][1]}&payment=${payment}`
