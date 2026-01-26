@@ -13,6 +13,42 @@ const CONFIG = {
       setPvzId: 'setPvzId'
     }
   },
+
+  // Селекторы DOM элементов
+  selectors: {
+    // Основные контейнеры
+    orderForm: '#bx-soa-order-form',
+    orderFormName: 'form[name="ORDER_FORM"]',
+    deliverySection: '#bx-soa-delivery',
+    orderContainer: '#bx-soa-order',
+    regionContainer: '#bx-soa-region',
+    
+    // Элементы выбора доставки
+    deliveryInputs: {
+      grafContainer: '.bx-soa-pp-company-graf-container input',
+      checkbox: 'input.bx-soa-pp-company-checkbox',
+      any: 'input'
+    },
+    checkedCompany: '.bx-soa-pp-company.bx-selected',
+    deliveryCompany: '.bx-soa-pp-company',
+
+    // здесь остановилась
+    companyDescription: '.bx-soa-pp-company-description',
+    companyDesc: '.bx-soa-pp-company-desc',
+    
+    // Кнопки и блоки
+    pvzButtonWrapper: '.twpx_btn_wrapper',
+    addressBlock: '#twpx-address',
+    locationInputContainer: '.bx-soa-location-input-container',
+    
+    // Формы и поля
+    formControl: '.form-control',
+    personTypeRadio: 'input[name*="PERSON_TYPE"]',
+    
+    // Попапы и UI
+    currentPopup: BX.PopupWindowManager.getCurrentPopup ? BX.PopupWindowManager.getCurrentPopup() : null,
+    body: 'body'
+  },
 }
 
 //input tel in popups
@@ -159,11 +195,11 @@ class InputTelMaskGetSetValue {
       };
 
       //recreate person-type radios
-      let hidden = document.querySelector('#bx-soa-region [class*="-group"]')
+      let hidden = document.querySelector(`${CONFIG.selectors.regionContainer} [class*="-group"]`)
         ? ''
         : '-hidden';
       let personTypeRadio = document.querySelector(
-        `#bx-soa-region${hidden} input[name*="PERSON_TYPE"]`
+        `${CONFIG.selectors.regionContainer}${hidden} input[name*="PERSON_TYPE"]`
       );
       if (personTypeRadio) {
         let formGroupDiv = personTypeRadio.closest(`[class*="-group"]`);
@@ -221,47 +257,53 @@ window.twinpxYadeliveryPopupProps = {
 window.twinpxYadeliveryFindBtnObject = function () {
   let btnObject, block;
   //find checked id
-  let input = document.querySelector('#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input.bx-soa-pp-company-checkbox')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input');
+  const deliveryBlock = document.querySelector(`${CONFIG.selectors.orderForm} ${CONFIG.selectors.deliverySection}`);
+  let input
+  
+  if (deliveryBlock) {
+    input = deliveryBlock.querySelector(CONFIG.selectors.deliveryInputs.grafContainer)
+      || deliveryBlock.querySelector(CONFIG.selectors.deliveryInputs.checkbox)
+      || deliveryBlock.querySelector(CONFIG.selectors.deliveryInputs.any);
+  }
 	
   let hidden = input ? '' : '-hidden';
+  const deliveryBlockHidden = document.querySelector(`${CONFIG.selectors.orderForm} ${CONFIG.selectors.deliverySection}${hidden}`);
 
-  let id;
-  let inputs = [];
-  if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`);
-  } else if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`);
-  } else if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input`);
-  }
-	  
-  inputs.forEach((checkbox) => {
-      if (checkbox.checked) {
-        id = checkbox.id;
-      }
-  });
+  if (deliveryBlockHidden) {
+    const graf = deliveryBlockHidden.querySelectorAll(CONFIG.selectors.deliveryInputs.grafContainer);
+    const checkbox = deliveryBlockHidden.querySelectorAll(CONFIG.selectors.deliveryInputs.checkbox);
+    const any = deliveryBlockHidden.querySelectorAll(CONFIG.selectors.deliveryInputs.any);
 
-  if (document.getElementById(id)) {
-    block = document.getElementById(id).closest('.bx-soa-pp-company');
-  }
-
-  if (id) {
-    if (window.twinpxYadeliveryButtons) {
-      window.twinpxYadeliveryButtons.forEach((obj) => {
-        if (obj.id === id) {
-          btnObject = Object.assign({}, obj);
+    let id;
+    let inputs = graf.length ? graf : checkbox.length ? checkbox : any.length ? any : [];
+      
+    inputs.forEach((checkbox) => {
+        if (checkbox.checked) {
+          id = checkbox.id;
         }
-      });
-    } else {
-      //create btnObject
-      btnObject = {
-        id: id,
-        btn: '',
-      };
+    });
+
+    if (document.getElementById(id)) {
+      block = document.getElementById(id).closest(CONFIG.selectors.deliveryCompany);
+    }
+
+    if (id) {
+      if (window.twinpxYadeliveryButtons) {
+        window.twinpxYadeliveryButtons.forEach((obj) => {
+          if (obj.id === id) {
+            btnObject = Object.assign({}, obj);
+          }
+        });
+      } else {
+        //create btnObject
+        btnObject = {
+          id: id,
+          btn: '',
+        };
+      }
     }
   }
+  
   return { btnObject, block };
 };
 
@@ -319,7 +361,7 @@ window.twinpxYadeliveryInsertAndFill = function (btnObject) {
     document.getElementById(btnObject.id) &&
     document
       .getElementById(btnObject.id)
-      .closest('.bx-soa-pp-company')
+      .closest(CONFIG.selectors.deliveryCompany)
       .querySelector('.twpx_btn_wrapper')
   ) {
     return;
@@ -335,7 +377,7 @@ window.twinpxYadeliveryInsertAndFill = function (btnObject) {
     // insert the button after description or in the end of the block
     let block = document
       .getElementById(btnObject.id)
-      .closest('.bx-soa-pp-company');
+      .closest(CONFIG.selectors.deliveryCompany);
 
     let blockToAppend =
       block.querySelector('.bx-soa-pp-company-description') ||
@@ -360,7 +402,7 @@ window.twinpxYadeliveryInsertAndFill = function (btnObject) {
 
 window.twinpxYadeliveryAddAddress = function (address) {
   let rightBlock = document.querySelector(
-    '#bx-soa-delivery .bx-soa-pp-company-desc'
+    `${CONFIG.selectors.deliverySection} .bx-soa-pp-company-desc`
   );
   if (rightBlock) {
     if (document.getElementById('twpx-address')) {
@@ -388,18 +430,27 @@ window.twinpxYadeliverySession = function (address, id) {
 };
 
 window.twinpxYadeliverySetCheckedStorage = function (onLoad) {
-  let input = document.querySelector('#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input.bx-soa-pp-company-checkbox')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input');
+  const deliveryBlock = document.querySelector(`${CONFIG.selectors.orderForm} ${CONFIG.selectors.deliverySection}`);
+  let input;
+  
+  if (deliveryBlock) {
+    input= deliveryBlock.querySelector(CONFIG.selectors.deliveryInputs.grafContainer)
+    || deliveryBlock.querySelector(CONFIG.selectors.deliveryInputs.checkbox)
+    || deliveryBlock.querySelector(CONFIG.selectors.deliveryInputs.any);
+  }
 	
   let hidden = input ? '' : '-hidden';
 
   //onload - insert yadelivery button if checked
   //set session storage
+  const deliveryBlockHidden = document.querySelector(`${CONFIG.selectors.orderForm} ${CONFIG.selectors.deliverySection}${hidden}`);
+
+  if (!deliveryBlockHidden) return;
+
   let checkbox =
-	document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected .bx-soa-pp-company-graf-container input`)
-	|| document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input.bx-soa-pp-company-checkbox`)
-	|| document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input`);
+	deliveryBlockHidden.querySelector(`${CONFIG.selectors.checkedCompany} ${CONFIG.selectors.deliveryInputs.grafContainer}`)
+	|| deliveryBlockHidden.querySelector(`${CONFIG.selectors.checkedCompany} ${CONFIG.selectors.deliveryInputs.checkbox}`)
+	|| deliveryBlockHidden.querySelector(`${CONFIG.selectors.checkedCompany} ${CONFIG.selectors.deliveryInputs.any}`);
 
   if (checkbox) {
     if (onLoad) {
@@ -412,7 +463,7 @@ window.twinpxYadeliverySetCheckedStorage = function (onLoad) {
         });
         if (btnObject) {
           window.twinpxYadeliveryInsertButton(
-            checkbox.closest('.bx-soa-pp-company'),
+            checkbox.closest(CONFIG.selectors.deliveryCompany),
             btnObject,
             true
           );
@@ -432,21 +483,23 @@ window.addEventListener('DOMContentLoaded', () => {
   window.twinpxYadeliverySetCheckedStorage(true);
 
   //check the yandexDelivery
-  if (document.querySelector('#bx-soa-order')) {
-    document.querySelector('#bx-soa-order').addEventListener('click', (e) => {
+  const orderContainer = document.querySelector(CONFIG.selectors.orderContainer);
+
+  if (orderContainer) {
+    orderContainer.addEventListener('click', (e) => {
       if (e.target.closest('.bx-soa-pp-desc-container')) {
         return;
       }
-      let block = e.target.closest('.bx-soa-pp-company');
+      let block = e.target.closest(CONFIG.selectors.deliveryCompany);
       if (
         block &&
-        e.target.closest('#bx-soa-delivery') &&
+        e.target.closest(CONFIG.selectors.deliverySection) &&
         !e.target.closest('.twpx_btn_wrapper')
       ) {
 		const input = 
-			block.querySelector('.bx-soa-pp-company-graf-container input')
-			|| block.querySelector('input.bx-soa-pp-company-checkbox')
-			|| block.querySelector('input');
+			block.querySelector(CONFIG.selectors.deliveryInputs.grafContainer)
+			|| block.querySelector(CONFIG.selectors.deliveryInputs.checkbox)
+			|| block.querySelector(CONFIG.selectors.deliveryInputs.any);
 			
 		if (input) {
 			let id = input.id;
@@ -478,7 +531,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   document
-    .querySelector('form[name="ORDER_FORM"]')
+    .querySelector(CONFIG.selectors.orderFormName)
     .addEventListener('focusin', (e) => {
       const target = e.target;
       const isFormControl =
@@ -493,7 +546,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
   document
-    .querySelector('form[name="ORDER_FORM"]')
+    .querySelector(CONFIG.selectors.orderFormName)
     .addEventListener('focusout', (e) => {
       const target = e.target;
       const isFormControl =
@@ -580,7 +633,7 @@ function pageScroll(flag) {
 //��������� ������
 function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
   let bxSoaOrderForm =
-      document.querySelector('#bx-soa-order-form') ||
+      document.querySelector(CONFIG.selectors.orderForm) ||
       yadeliveryButton.closest('form'),
     fields = twinpxYadeliverySerializeForm(bxSoaOrderForm),
     twpxYadeliveryElem = document.createElement('div'),
@@ -1169,7 +1222,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
 
 function showPvz(yadeliveryButton, yadeliveryMode) {
   let bxSoaOrderForm =
-      document.querySelector('#bx-soa-order-form') ||
+      document.querySelector(CONFIG.selectors.orderForm) ||
       yadeliveryButton.closest('form'),
     fields = twinpxYadeliverySerializeForm(bxSoaOrderForm),
     ydPopupContainer,
