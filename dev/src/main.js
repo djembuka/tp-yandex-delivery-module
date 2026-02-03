@@ -1,5 +1,5 @@
 import { InputTelMaskGetSetValue } from './utils/InputTelMaskGetSetValue'
-import { pageScroll } from './utils/helpers';
+import { pageScroll, twinpxYadeliverySerializeForm } from './utils/helpers';
 import { createPointsItem, getPvzPopupContainer } from './utils/templates';
 import { popupProps } from './data/popup';
 
@@ -2240,18 +2240,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     return focusElement;
   }
-}
-
-function twinpxYadeliverySerializeForm(form) {
-  const obj = Object.fromEntries(new FormData(form));
-
-  let result = '';
-
-  Object.keys(obj).forEach((key) => {
-    result += `&${key}=${obj[key]}`;
-  });
-
-  return result.substring(1);
 }
 
 //custom events and methods
