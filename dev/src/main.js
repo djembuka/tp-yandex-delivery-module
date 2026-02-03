@@ -1,4 +1,6 @@
 import { InputTelMaskGetSetValue } from './utils/InputTelMaskGetSetValue'
+import { pageScroll } from './utils/helpers';
+import { createPointsItem } from './utils/templates';
 import { popupProps } from './data/popup';
 
 // window.twinpxYadelivery.pvzPopupShow();
@@ -437,12 +439,6 @@ async function sendOffer(jsonStr) {
   });
 
   return response.json();
-}
-
-function pageScroll(flag) {
-  flag
-    ? document.querySelector('body').classList.remove('no-scroll')
-    : document.querySelector('body').classList.add('no-scroll');
 }
 
 //��������� ������
@@ -1320,36 +1316,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
       'yd-popup--slide'
     );
     ydPopupContainer.classList.add(`yd-popup--${mode}`);
-  }
-
-  function createPointsItem({
-    id,
-    title,
-    type,
-    schedule,
-    address,
-    coords,
-    json,
-  }) {
-    let item = document.createElement('div');
-    item.className = 'yd-popup-list__item';
-    item.setAttribute('data-id', id);
-    item.setAttribute('data-address', address);
-    item.setAttribute('data-coords', coords);
-    item.setAttribute('data-json', json);
-
-    item.innerHTML = `
-      <div class="yd-popup-list__title">${title}</div>
-      <div class="yd-popup-list__text">
-      <span>${type}</span> ${schedule}<br>
-      ${address}
-      </div>
-      <div class="yd-popup-btn yd-popup-btn--red">${BX.message(
-        'TWINPX_JS_SELECT'
-      )}</div>
-    `;
-
-    return item;
   }
 
   async function sendId(json, address) {
