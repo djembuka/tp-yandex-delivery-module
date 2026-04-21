@@ -1,0 +1,16 @@
+{
+  "name": "dev",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --outfile=dist/script.js --format=esm --target=es2020 --tree-shaking=false --keep-names=true --minify=false --sourcemap",
+    "watch": "esbuild src/main.js --bundle --outfile=dist/script.js --format=esm --target=es2020 --tree-shaking=false --keep-names=true --minify=false --sourcemap --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "esbuild": "^0.27.2"
+  }
+}

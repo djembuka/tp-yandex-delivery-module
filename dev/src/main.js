@@ -1,105 +1,7 @@
-//input tel in popups
-class InputTelMaskGetSetValue {
-  constructor(input) {
-    this.input = input;
-    this.instance = true;
-    this.input.instance = this;
-    this.init();
-  }
-
-  init() {
-    this.input.addEventListener('focus', () => {
-      this.focus();
-    });
-    this.input.addEventListener('blur', () => {
-      this.blur();
-    });
-    this.input.addEventListener('keydown', (e) => this.keydown(e));
-  }
-
-  focus() {
-    if (this.input.value === '') {
-      this.input.value = '+7 (';
-    }
-  }
-
-  blur() {
-    if (this.input.value === '+7 (') {
-      this.input.value = '';
-    }
-  }
-
-  keydown(e) {
-    let key = e.key;
-    let not = key.replace(/([0-9])/, 1);
-
-    if (not == 1) {
-      if (this.input.value.length < 4 || this.input.value === '') {
-        this.input.value = '+7 (';
-      }
-      if (this.input.value.length === 7) {
-        this.input.value = this.input.value + ') ';
-      }
-      if (this.input.value.length === 12) {
-        this.input.value = this.input.value + '-';
-      }
-      if (this.input.value.length === 15) {
-        this.input.value = this.input.value + '-';
-      }
-      if (this.input.value.length >= 18) {
-        this.input.value = this.input.value.substring(0, 17);
-      }
-    } else if ('Backspace' !== not && 'Tab' !== not) {
-      e.preventDefault();
-    }
-  }
-
-  get val() {
-    let phone = this.input.value.replace(/\D/g, '').substr(0, 11);
-    let first = phone.substr(0, 1);
-    if (phone.length > 0 && phone.length < 11) {
-      phone = `${first !== '7' ? '7' : ''}${phone}`;
-    } else if (first && first !== '7') {
-      phone = `7${phone.substr(1)}`;
-    }
-
-    return phone;
-  }
-
-  set val(value) {
-    let phone = value.replace(/\D/g, '').substr(0, 11);
-    let first = phone.substr(0, 1);
-    if (phone.length > 0 && phone.length < 11) {
-      phone = `${first !== '7' ? '7' : ''}${phone}`;
-    } else if (first && first !== '7') {
-      phone = `7${phone.substr(1)}`;
-    }
-
-    let result = '';
-
-    if (phone.substr(0, 1)) {
-      result += `+${phone.substr(0, 1)}`;
-    }
-    if (phone.substr(1, 1)) {
-      result += ' (';
-    }
-    result += phone.substr(1, 3);
-    if (phone.substr(3, 1)) {
-      result += ') ';
-    }
-    result += phone.substr(4, 3);
-    if (phone.substr(7, 1)) {
-      result += '-';
-    }
-    result += phone.substr(7, 2);
-    if (phone.substr(9, 1)) {
-      result += '-';
-    }
-    result += phone.substr(9, 2);
-
-    this.input.value = result;
-  }
-}
+import { InputTelMaskGetSetValue } from './utils/InputTelMaskGetSetValue'
+import { pageScroll, twinpxYadeliverySerializeForm } from './utils/helpers';
+import { createPointsItem, getPvzPopupContainer } from './utils/templates';
+import { popupProps } from './data/popup';
 
 // window.twinpxYadelivery.pvzPopupShow();
 // window.twinpxYadelivery.pvzPopupClose();
@@ -184,40 +86,25 @@ window.twinpxYadeliveryYmapsAPI =
     ? true
     : false;
 
-window.twinpxYadeliveryPopupProps = {
-  width: 1076,
-  height: 600,
-  zIndex: 100,
-  overlay: {
-    backgroundColor: '#333',
-    opacity: '80',
-  },
-  closeByEsc: true,
-  autoHide: true,
-  darkMode: false,
-  draggable: false,
-  resizable: false,
-  lightShadow: false,
-  angle: false,
-};
+window.twinpxYadeliveryPopupProps = popupProps;
 
 window.twinpxYadeliveryFindBtnObject = function () {
   let btnObject, block;
   //find checked id
-  let input = document.querySelector('#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input.bx-soa-pp-company-checkbox')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input');
+  let input = document.querySelector('#bx-soa-delivery .bx-soa-pp-company-graf-container input')
+	|| document.querySelector('#bx-soa-delivery input.bx-soa-pp-company-checkbox')
+	|| document.querySelector('#bx-soa-delivery input');
 	
   let hidden = input ? '' : '-hidden';
 
   let id;
   let inputs = [];
-  if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`);
-  } else if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`);
-  } else if (document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input`).length) {
-	  inputs = document.querySelectorAll(`#bx-soa-order-form #bx-soa-delivery${hidden} input`);
+  if (document.querySelectorAll(`#bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`).length) {
+	  inputs = document.querySelectorAll(`#bx-soa-delivery${hidden} .bx-soa-pp-company-graf-container input`);
+  } else if (document.querySelectorAll(`#bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`).length) {
+	  inputs = document.querySelectorAll(`#bx-soa-delivery${hidden} input.bx-soa-pp-company-checkbox`);
+  } else if (document.querySelectorAll(`#bx-soa-delivery${hidden} input`).length) {
+	  inputs = document.querySelectorAll(`#bx-soa-delivery${hidden} input`);
   }
 	  
   inputs.forEach((checkbox) => {
@@ -371,18 +258,18 @@ window.twinpxYadeliverySession = function (address, id) {
 };
 
 window.twinpxYadeliverySetCheckedStorage = function (onLoad) {
-  let input = document.querySelector('#bx-soa-order-form #bx-soa-delivery .bx-soa-pp-company-graf-container input')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input.bx-soa-pp-company-checkbox')
-	|| document.querySelector('#bx-soa-order-form #bx-soa-delivery input');
+  let input = document.querySelector('#bx-soa-delivery .bx-soa-pp-company-graf-container input')
+	|| document.querySelector('#bx-soa-delivery input.bx-soa-pp-company-checkbox')
+	|| document.querySelector('#bx-soa-delivery input');
 	
   let hidden = input ? '' : '-hidden';
 
   //onload - insert yadelivery button if checked
   //set session storage
   let checkbox =
-	document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected .bx-soa-pp-company-graf-container input`)
-	|| document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input.bx-soa-pp-company-checkbox`)
-	|| document.querySelector(`#bx-soa-order-form #bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input`);
+	document.querySelector(`#bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected .bx-soa-pp-company-graf-container input`)
+	|| document.querySelector(`#bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input.bx-soa-pp-company-checkbox`)
+	|| document.querySelector(`#bx-soa-delivery${hidden} .bx-soa-pp-company.bx-selected input`);
 
   if (checkbox) {
     if (onLoad) {
@@ -552,12 +439,6 @@ async function sendOffer(jsonStr) {
   });
 
   return response.json();
-}
-
-function pageScroll(flag) {
-  flag
-    ? document.querySelector('body').classList.remove('no-scroll')
-    : document.querySelector('body').classList.add('no-scroll');
 }
 
 //��������� ������
@@ -1176,119 +1057,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     pointsNodesArray = {},
     newBounds = [],
     fetchTimeout = 20000,
-    container = `<div class="yd-popup-container yd-popup--map ${
-      yadeliveryMode === 'simple' ? 'yd-popup--simple' : ''
-    }">
-        <div class="yd-popup-error-message">
-          <div class="yd-popup-error__message">
-            <i style="background-image: url(/bitrix/images/twinpx.yadelivery/danger.svg)"></i>
-            ${BX.message('TWINPX_JS_NO_YMAP_KEY')}
-          </div>
-        </div>
-        <div id="ydPopupMap" class="yd-popup-map load-circle"></div>
-        <div class="yd-popup-slide">
-          <div class="yd-popup-slide-wrapper">
-            <div class="yd-popup-slide-detail"></div>
-            <div class="yd-popup-slide-error-form">
-              <form action="" novalidate="">
-                <div class="yd-popup-form">
-                  <div class="b-float-label">
-                      <input name="PropFio" id="ydSlideFormFio" type="text" value="" required="" data-code="PropFio">
-                      <label for="ydSlideFormFio">${BX.message(
-                        'TWINPX_JS_FIO'
-                      )}</label>
-                  </div>
-
-                  <div class="b-float-label">
-                      <input name="PropEmail" id="ydSlideFormEmail" type="email" value="" data-code="PropEmail">
-                      <label for="ydSlideFormEmail">${BX.message(
-                        'TWINPX_JS_EMAIL'
-                      )}</label>
-                  </div>
-
-                  <div class="b-float-label">
-                      <input name="PropPhone" id="ydSlideFormPhone" type="tel" value="" required="" data-code="PropPhone">
-                      <label for="ydSlideFormPhone">${BX.message(
-                        'TWINPX_JS_PHONE'
-                      )}</label>
-                  </div>
-                  
-                  <input name="PropAddress" id="ydSlideFormAddress" type="hidden" value="" data-code="PropAddress">
-                </div>
-
-                <div class="yd-popup-form__submit">
-                    <button class="yd-popup-form__btn" type="submit">${BX.message(
-                      'TWINPX_JS_CONTINUE'
-                    )}</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <div class="yd-popup-list">
-          <div class="yd-popup-list__back">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="6.446" height="10.891" viewBox="0 0 6.446 10.891">
-              <defs><clipPath id="clip-path"><rect width="6.446" height="10.891" transform="translate(0 0)" fill="none" stroke="#0b0b0b" stroke-width="1"/></clipPath></defs>
-              <g transform="translate(0 0)"><g clip-path="url(#clip-path)"><path d="M5.446,9.891,1,5.445,5.446,1" fill="none" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></g></g>
-            </svg>
-            ${BX.message('TWINPX_JS_RETURN_LIST')}
-          </div>
-          <div class="yd-popup-list-wrapper load-circle"></div>
-          <div class="yd-popup-list-detail-wrapper">
-            <div class="yd-popup-list-detail"></div>
-            <div class="yd-popup-error-form">
-              <form action="" novalidate="">
-                <div class="yd-popup-form">
-                  <div class="b-float-label">
-                      <input name="PropFio" id="ydFormFio" type="text" value="" required="" data-code="PropFio">
-                      <label for="ydFormFio">${BX.message(
-                        'TWINPX_JS_FIO'
-                      )}</label>
-                  </div>
-
-                  <div class="b-float-label">
-                      <input name="PropEmail" id="ydFormEmail" type="email" value="" data-code="PropEmail">
-                      <label for="ydFormEmail">${BX.message(
-                        'TWINPX_JS_EMAIL'
-                      )}</label>
-                  </div>
-
-                  <div class="b-float-label">
-                      <input name="PropPhone" id="ydFormPhone" type="tel" value="" required="" data-code="PropPhone">
-                      <label for="ydFormPhone">${BX.message(
-                        'TWINPX_JS_PHONE'
-                      )}</label>
-                  </div>
-                  
-                  <input name="PropAddress" id="ydFormAddress" type="hidden" value="" data-code="PropAddress">
-                </div>
-
-                <div class="yd-popup-form__submit">
-                    <span class="yd-popup-form__btn yd-popup-form__btn--skip">${BX.message(
-                      'TWINPX_JS_RESET'
-                    )}</span>
-                    <button class="yd-popup-form__btn" type="submit">${BX.message(
-                      'TWINPX_JS_CONTINUE'
-                    )}</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <div class="yd-popup-mobile-top">
-          <div class="yd-popup-btn yd-popup-btn--light yd-popup-btn--active">${BX.message(
-            'TWINPX_JS_ONCART'
-          )}</div>
-          <div class="yd-popup-btn yd-popup-btn--light">${BX.message(
-            'TWINPX_JS_ONLIST'
-          )}</div>
-        </div>
-        <div class="yd-popup-mobile-bottom">
-          <div class="yd-popup-btn yd-popup-btn--gray">${BX.message(
-            'TWINPX_JS_CLOSE'
-          )}</div>
-        </div>
-      </div>`;
+    container = getPvzPopupContainer(yadeliveryMode);
 
   //pvz popup
   pvzPopup = BX.PopupWindowManager.create('ydPopup', '', {
@@ -1437,36 +1206,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     ydPopupContainer.classList.add(`yd-popup--${mode}`);
   }
 
-  function createPointsItem({
-    id,
-    title,
-    type,
-    schedule,
-    address,
-    coords,
-    json,
-  }) {
-    let item = document.createElement('div');
-    item.className = 'yd-popup-list__item';
-    item.setAttribute('data-id', id);
-    item.setAttribute('data-address', address);
-    item.setAttribute('data-coords', coords);
-    item.setAttribute('data-json', json);
-
-    item.innerHTML = `
-      <div class="yd-popup-list__title">${title}</div>
-      <div class="yd-popup-list__text">
-      <span>${type}</span> ${schedule}<br>
-      ${address}
-      </div>
-      <div class="yd-popup-btn yd-popup-btn--red">${BX.message(
-        'TWINPX_JS_SELECT'
-      )}</div>
-    `;
-
-    return item;
-  }
-
   async function sendId(json, address) {
     //get offers
     let formData = new FormData();
@@ -1507,6 +1246,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         !!BX.Sale.OrderAjaxComponent &&
         !!BX.Sale.OrderAjaxComponent.sendRequest
       ) {
+        console.log('send request')
         window.BX.Sale.OrderAjaxComponent.sendRequest();
       }
 
@@ -1533,6 +1273,8 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
   async function showDetail(jsonString, coords, map) {
     //set detail mode
     setPopupMode('detail');
+
+    console.log(yadeliveryMode)
 
     if (
       yadeliveryMode &&
@@ -2501,18 +2243,6 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
 
     return focusElement;
   }
-}
-
-function twinpxYadeliverySerializeForm(form) {
-  const obj = Object.fromEntries(new FormData(form));
-
-  let result = '';
-
-  Object.keys(obj).forEach((key) => {
-    result += `&${key}=${obj[key]}`;
-  });
-
-  return result.substring(1);
 }
 
 //custom events and methods
