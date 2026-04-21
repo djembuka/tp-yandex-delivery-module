@@ -1499,19 +1499,19 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
         //set address control value
         document.querySelector(`[name="${result.FIELDS.PropAddress}"]`).value =
           address;
-
-        if (
-          window.BX &&
-          !!BX.Sale &&
-          !!BX.Sale.OrderAjaxComponent &&
-          !!BX.Sale.OrderAjaxComponent.sendRequest
-        ) {
-          window.BX.Sale.OrderAjaxComponent.sendRequest();
-        }
-
-        //insert button if needed
-        window.twinpxYadeliveryInsertButton();
       }
+
+      if (
+        window.BX &&
+        !!BX.Sale &&
+        !!BX.Sale.OrderAjaxComponent &&
+        !!BX.Sale.OrderAjaxComponent.sendRequest
+      ) {
+        window.BX.Sale.OrderAjaxComponent.sendRequest();
+      }
+
+      //insert button if needed
+      window.twinpxYadeliveryInsertButton();
     } catch (err) {
       throw err;
     }
