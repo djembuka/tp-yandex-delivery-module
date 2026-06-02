@@ -513,6 +513,7 @@ window.addEventListener('DOMContentLoaded', () => {
   async function resetPrice() {
     let formData = new FormData();
     formData.set('action', 'reset');
+    if (window.BX) formData.set('sessid', BX.bitrix_sessid());
 
     await fetch(window.twinpxYadeliveryFetchURL, {
       method: 'POST',
@@ -545,6 +546,7 @@ async function sendOffer(jsonStr) {
 
   formData.set('action', 'setOfferPrice');
   formData.set('fields', jsonStr);
+  if (window.BX) formData.set('sessid', BX.bitrix_sessid());
 
   response = await fetch(window.twinpxYadeliveryFetchURL, {
     method: 'POST',
@@ -994,6 +996,7 @@ function twinpxYadeliveryCourierPopupOpen(yadeliveryButton) {
     //fetch request
     formData.set('action', 'getOffer');
     formData.set('fields', fields);
+    if (window.BX) formData.set('sessid', BX.bitrix_sessid());
 
     if (props) {
       formData.set('props', props);
@@ -1338,6 +1341,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     //fetch request
     formData.set('action', 'getRegion');
     formData.set('fields', fields);
+    if (window.BX) formData.set('sessid', BX.bitrix_sessid());
 
     setTimeout(() => {
       if (!response) {
@@ -1472,6 +1476,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
     let formData = new FormData();
     formData.set('action', 'setPvzId');
     formData.set('json', json);
+    if (window.BX) formData.set('sessid', BX.bitrix_sessid());
 
     let controller = new AbortController();
     let response;
@@ -1655,10 +1660,8 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
       'fields',
       `${fields}&id=${jsonObject.id}&address=${jsonObject.address}&title=${jsonObject.title}`
     );
-
-    if (props) {
-      formData.set('props', props);
-    }
+    if (props) formData.set('props', props);
+    if (window.BX) formData.set('sessid', BX.bitrix_sessid());
 
     let controller = new AbortController();
     let response;
@@ -2239,6 +2242,7 @@ function showPvz(yadeliveryButton, yadeliveryMode) {
               'fields',
               `lat-from=${bounds[0][0]}&lat-to=${bounds[1][0]}&lon-from=${bounds[0][1]}&lon-to=${bounds[1][1]}&payment=${payment}`
             );
+            if (window.BX) formData.set('sessid', BX.bitrix_sessid());
 
             let controller = new AbortController();
             let response;
